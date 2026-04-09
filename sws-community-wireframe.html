@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simply Wall St — Community Page Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f5f5; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+  /* Top Nav */
+  .nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 12px 32px; display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-weight: 700; font-size: 16px; color: #1a1a1a; }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a { color: #888; text-decoration: none; font-size: 13px; }
+  .nav-links a.active { color: #1a1a1a; font-weight: 600; border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
+  .nav-search { margin-left: auto; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; width: 240px; }
+
+  /* Page Container */
+  .page { max-width: 1200px; margin: 0 auto; padding: 24px 32px; }
+
+  /* Section headers */
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; margin-top: 36px; }
+  .section-header:first-child { margin-top: 0; }
+  .section-title { font-size: 18px; font-weight: 600; color: #1a1a1a; }
+  .view-all { font-size: 13px; color: #2563eb; text-decoration: none; cursor: pointer; }
+  .view-all:hover { text-decoration: underline; }
+
+  /* Swimlane container */
+  .swimlane { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; -ms-overflow-style: none; scrollbar-width: none; }
+  .swimlane::-webkit-scrollbar { display: none; }
+
+  /* ---- COMMUNITY QUESTION (full width) ---- */
+  .community-question { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 28px 32px; display: flex; align-items: center; gap: 24px; margin-bottom: 8px; }
+  .cq-avatar { width: 48px; height: 48px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: #888; flex-shrink: 0; }
+  .cq-content { flex: 1; }
+  .cq-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #2563eb; margin-bottom: 6px; font-weight: 600; }
+  .cq-question { font-size: 17px; font-weight: 500; color: #1a1a1a; line-height: 1.4; }
+  .cq-meta { font-size: 12px; color: #888; margin-top: 6px; }
+  .cq-btn { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 10px 24px; font-weight: 600; font-size: 14px; cursor: pointer; flex-shrink: 0; }
+  .cq-btn:hover { background: #1d4ed8; }
+
+  /* ---- WEEKLY PICKS ---- */
+  .pick-card { flex: 1; min-width: 0; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; }
+  .pick-author { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .pick-avatar { width: 32px; height: 32px; border-radius: 50%; background: #d4d4d4; }
+  .pick-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .pick-title { font-size: 15px; font-weight: 600; line-height: 1.35; margin-bottom: 10px; color: #1a1a1a; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .pick-excerpt { font-size: 13px; color: #888; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 14px; }
+  .pick-valuation { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+  .pick-price { font-size: 16px; font-weight: 700; color: #1a1a1a; }
+  .pick-tag { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; }
+  .pick-tag.undervalued { background: #f0fdf4; color: #16a34a; }
+  .pick-stats { display: flex; gap: 14px; font-size: 12px; color: #888; }
+
+  /* ---- TRENDING WATCHLISTS ---- */
+  .watchlist-card { min-width: 260px; max-width: 260px; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 18px; scroll-snap-align: start; flex-shrink: 0; transition: border-color 0.2s; cursor: pointer; }
+  .watchlist-card:hover { border-color: #2563eb; }
+  .wl-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .wl-icon { width: 36px; height: 36px; border-radius: 8px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .wl-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .wl-author { font-size: 12px; color: #888; }
+  .wl-stocks { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+  .wl-ticker { font-size: 11px; background: #f5f5f5; color: #555; padding: 3px 8px; border-radius: 4px; font-family: 'SF Mono', 'Menlo', monospace; }
+  .wl-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #888; }
+  .wl-followers { display: flex; align-items: center; gap: 4px; }
+  .wl-dot { color: #2563eb; }
+
+  /* ---- STOCKS INVESTORS ARE WATCHING (social proof) ---- */
+  .social-proof-lane { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 8px; -ms-overflow-style: none; scrollbar-width: none; }
+  .social-proof-lane::-webkit-scrollbar { display: none; }
+  .sp-card { min-width: 220px; max-width: 220px; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+  .sp-ticker-row { display: flex; align-items: center; gap: 10px; }
+  .sp-logo { width: 32px; height: 32px; border-radius: 8px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #888; border: 1px solid #e0e0e0; }
+  .sp-ticker { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+  .sp-name { font-size: 12px; color: #888; }
+  .sp-signal { font-size: 13px; color: #1a1a1a; font-weight: 500; line-height: 1.3; }
+  .sp-signal .num { font-size: 22px; font-weight: 700; color: #2563eb; }
+  .sp-context { font-size: 11px; color: #888; }
+
+  /* ---- AUTHORS & VOICES SECTION (side by side) ---- */
+  .authors-row { display: flex; gap: 20px; margin-top: 0; }
+  .authors-col { flex: 1; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; }
+  .authors-col-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .authors-col-title { font-size: 16px; font-weight: 600; color: #1a1a1a; }
+
+  .author-row { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #f0f0f0; }
+  .author-row:last-child { border-bottom: none; }
+  .author-rank { font-size: 14px; font-weight: 700; color: #bbb; width: 22px; text-align: center; flex-shrink: 0; }
+  .author-av { width: 36px; height: 36px; border-radius: 50%; background: #e0e0e0; flex-shrink: 0; }
+  .author-av.recommended { border: 2px solid #2563eb; }
+  .author-info { flex: 1; }
+  .author-name { font-size: 14px; font-weight: 600; color: #1a1a1a; display: flex; align-items: center; gap: 6px; }
+  .author-views { font-size: 12px; color: #888; }
+  .recommended-badge { font-size: 9px; background: #2563eb12; color: #2563eb; padding: 2px 7px; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
+  .author-subscribe { font-size: 11px; color: #fff; background: #2563eb; border: none; border-radius: 5px; padding: 5px 14px; cursor: pointer; font-weight: 500; flex-shrink: 0; }
+  .author-subscribe:hover { background: #1d4ed8; }
+
+  /* ---- NARRATIVE FEED (bottom) ---- */
+  .feed-section { margin-top: 40px; border-top: 1px solid #e0e0e0; padding-top: 24px; }
+  .feed-tabs { display: flex; gap: 16px; margin-bottom: 20px; }
+  .feed-tab { font-size: 13px; color: #888; cursor: pointer; padding-bottom: 6px; border-bottom: 2px solid transparent; }
+  .feed-tab.active { color: #1a1a1a; border-bottom-color: #2563eb; }
+
+  .feed-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px; margin-bottom: 14px; display: flex; gap: 20px; }
+  .feed-card.featured-narrative { border: 2px solid #2563eb; background: #fafbff; }
+  .feed-main { flex: 1; }
+  .feed-author { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .feed-author-av { width: 28px; height: 28px; border-radius: 50%; background: #e0e0e0; }
+  .feed-author-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .feed-author-time { font-size: 12px; color: #888; }
+  .feed-featured-label { font-size: 10px; background: #2563eb15; color: #2563eb; padding: 2px 8px; border-radius: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .feed-stock-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .stock-icon { width: 24px; height: 24px; border-radius: 6px; background: #f5f5f5; border: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #888; flex-shrink: 0; }
+  .stock-label { font-size: 12px; color: #555; font-weight: 500; }
+  .feed-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; line-height: 1.35; color: #1a1a1a; }
+  .feed-excerpt { font-size: 13px; color: #888; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 12px; }
+  .feed-social-proof { font-size: 12px; color: #2563eb; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .feed-social-proof svg { width: 14px; height: 14px; }
+  .feed-stats { display: flex; gap: 16px; font-size: 12px; color: #888; }
+  .feed-valuation { min-width: 140px; text-align: right; flex-shrink: 0; }
+  .feed-val-price { font-size: 18px; font-weight: 700; margin-bottom: 4px; color: #1a1a1a; }
+  .feed-val-tag { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; background: #f0fdf4; color: #16a34a; }
+
+  /* ---- ROOMS ---- */
+  .room-card { min-width: 280px; max-width: 280px; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 18px; scroll-snap-align: start; flex-shrink: 0; transition: border-color 0.2s; cursor: pointer; }
+  .room-card:hover { border-color: #2563eb; }
+  .room-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .room-stock-icon { width: 40px; height: 40px; border-radius: 10px; background: #f5f5f5; border: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #888; flex-shrink: 0; }
+  .room-name { font-size: 15px; font-weight: 600; color: #1a1a1a; }
+  .room-ticker { font-size: 12px; color: #888; }
+  .room-activity { display: flex; align-items: center; gap: 6px; margin-bottom: 12px; font-size: 12px; }
+  .room-live-dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
+  .room-live-text { color: #16a34a; font-weight: 600; }
+  .room-members { color: #888; }
+  .room-threads { margin-bottom: 14px; }
+  .room-thread { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid #f5f5f5; }
+  .room-thread:last-child { border-bottom: none; }
+  .room-thread-dot { width: 4px; height: 4px; border-radius: 50%; background: #ccc; flex-shrink: 0; }
+  .room-thread-title { font-size: 13px; color: #555; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; flex: 1; }
+  .room-thread-count { font-size: 11px; color: #888; flex-shrink: 0; }
+  .room-join { display: block; width: 100%; text-align: center; font-size: 13px; color: #2563eb; background: #2563eb0a; border: 1px solid #2563eb30; border-radius: 8px; padding: 8px; cursor: pointer; font-weight: 500; }
+  .room-join:hover { background: #2563eb15; }
+
+  /* Wireframe label bar */
+  .wf-banner { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 32px; display: flex; align-items: center; justify-content: center; }
+  .wf-label { font-size: 12px; color: #888; }
+  .wf-label strong { color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<!-- Wireframe Banner -->
+<div class="wf-banner">
+  <div class="wf-label"><strong>Simply Wall St</strong> — Community Page Wireframe</div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-logo">Simply Wall St</div>
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Portfolios</a>
+    <a href="#">Watchlist</a>
+    <a href="#" class="active">Community</a>
+    <a href="#">Discover</a>
+    <a href="#">Screener</a>
+  </div>
+  <input class="nav-search" placeholder="Search companies worldwide..." />
+</nav>
+
+<div class="page">
+
+  <!-- ==================== SWIMLANE 1: Community Question ==================== -->
+  <div class="section-header" style="margin-top: 8px;">
+    <span class="section-title">Community</span>
+  </div>
+
+  <div class="community-question">
+    <div class="cq-avatar">CM</div>
+    <div class="cq-content">
+      <div class="cq-label">Question of the Week</div>
+      <div class="cq-question">What's the largest stock in your portfolio, and why do you hold it?</div>
+      <div class="cq-meta">Asked by Community Team · 142 responses · Ends in 3 days</div>
+    </div>
+    <button class="cq-btn">Share Your Answer</button>
+  </div>
+
+  <!-- ==================== SWIMLANE 2: Weekly Picks (3 cards only) ==================== -->
+  <div class="section-header">
+    <span class="section-title">Weekly Picks</span>
+  </div>
+
+  <div style="display: flex; gap: 16px;">
+    <div class="pick-card">
+      <div class="pick-author">
+        <div class="pick-avatar"></div>
+        <span class="pick-name">SimpleMan887</span>
+      </div>
+      <div class="pick-title">GameStop will ace the financial crisis wave with its strategic Bitcoin...</div>
+      <div class="pick-excerpt">GameStop's Q1 2026 financials, combined with an amazing return, just showed its resilience...</div>
+      <div class="pick-valuation">
+        <span class="pick-price">US$220</span>
+        <span class="pick-tag undervalued">69.0% undervalued</span>
+      </div>
+      <div class="pick-stats">
+        <span>8.1k views</span>
+        <span>15 likes</span>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-author">
+        <div class="pick-avatar"></div>
+        <span class="pick-name">yiannisz</span>
+      </div>
+      <div class="pick-title">The First Real Lidar Winner</div>
+      <div class="pick-excerpt">Something quietly shifted in the lidar space and most investors haven't fully processed it yet...</div>
+      <div class="pick-valuation">
+        <span class="pick-price">US$27.07</span>
+        <span class="pick-tag undervalued">19.2% undervalued</span>
+      </div>
+      <div class="pick-stats">
+        <span>1.2k views</span>
+        <span>10 likes</span>
+      </div>
+    </div>
+
+    <div class="pick-card">
+      <div class="pick-author">
+        <div class="pick-avatar"></div>
+        <span class="pick-name">Agricola</span>
+      </div>
+      <div class="pick-title">A Case for Guanajuato Silver to reach $4 high end...</div>
+      <div class="pick-excerpt">Key assumptions: metal prices, gold at $4,200/oz, 80% above spot, and silver at...</div>
+      <div class="pick-valuation">
+        <span class="pick-price">CA$18</span>
+        <span class="pick-tag undervalued">56.6% undervalued</span>
+      </div>
+      <div class="pick-stats">
+        <span>774 views</span>
+        <span>19 likes</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SWIMLANE 3: Authors ==================== -->
+  <div class="section-header">
+    <span class="section-title">Authors</span>
+  </div>
+
+  <div class="authors-row">
+    <!-- Left: Top Authors by Views -->
+    <div class="authors-col">
+      <div class="authors-col-header">
+        <span class="authors-col-title">Top Authors</span>
+        <a class="view-all" href="#">View all &#8594;</a>
+      </div>
+
+      <div class="author-row">
+        <span class="author-rank">1</span>
+        <div class="author-av"></div>
+        <div class="author-info">
+          <div class="author-name">tripledub</div>
+          <div class="author-views">3.1k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <span class="author-rank">2</span>
+        <div class="author-av"></div>
+        <div class="author-info">
+          <div class="author-name">Rotbio</div>
+          <div class="author-views">6.7k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <span class="author-rank">3</span>
+        <div class="author-av"></div>
+        <div class="author-info">
+          <div class="author-name">SimpleMan887</div>
+          <div class="author-views">2.5k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <span class="author-rank">4</span>
+        <div class="author-av"></div>
+        <div class="author-info">
+          <div class="author-name">Aharon</div>
+          <div class="author-views">4.5k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <span class="author-rank">5</span>
+        <div class="author-av"></div>
+        <div class="author-info">
+          <div class="author-name">yiannisz</div>
+          <div class="author-views">1.8k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+    </div>
+
+    <!-- Right: Recommended Voices (cherry-picked by CM) -->
+    <div class="authors-col">
+      <div class="authors-col-header">
+        <span class="authors-col-title">Recommended Voices</span>
+      </div>
+
+      <div class="author-row">
+        <div class="author-av recommended"></div>
+        <div class="author-info">
+          <div class="author-name">stuart_roberts <span class="recommended-badge">Recommended Voice</span></div>
+          <div class="author-views">42 narratives · 28.5k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <div class="author-av recommended"></div>
+        <div class="author-info">
+          <div class="author-name">Agricola <span class="recommended-badge">Recommended Voice</span></div>
+          <div class="author-views">31 narratives · 19.2k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <div class="author-av recommended"></div>
+        <div class="author-info">
+          <div class="author-name">FA_Trader <span class="recommended-badge">Recommended Voice</span></div>
+          <div class="author-views">18 narratives · 12.1k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <div class="author-av recommended"></div>
+        <div class="author-info">
+          <div class="author-name">TechMegaTrends <span class="recommended-badge">Recommended Voice</span></div>
+          <div class="author-views">24 narratives · 15.8k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+
+      <div class="author-row">
+        <div class="author-av recommended"></div>
+        <div class="author-info">
+          <div class="author-name">Nomadic <span class="recommended-badge">Recommended Voice</span></div>
+          <div class="author-views">12 narratives · 9.4k views</div>
+        </div>
+        <button class="author-subscribe">Subscribe</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SWIMLANE 4: Trending Watchlists ==================== -->
+  <div class="section-header">
+    <span class="section-title">Trending Watchlists</span>
+    <a class="view-all" href="#">View all &#8594;</a>
+  </div>
+
+  <div class="swimlane">
+    <div class="watchlist-card">
+      <div class="wl-header">
+        <div class="wl-icon">&#129516;</div>
+        <div>
+          <div class="wl-name">Biotech Breakouts 2026</div>
+          <div class="wl-author">by @pharma_investor</div>
+        </div>
+      </div>
+      <div class="wl-stocks">
+        <span class="wl-ticker">LLY</span>
+        <span class="wl-ticker">MRNA</span>
+        <span class="wl-ticker">VRTX</span>
+        <span class="wl-ticker">REGN</span>
+        <span class="wl-ticker">+3</span>
+      </div>
+      <div class="wl-footer">
+        <div class="wl-followers"><span class="wl-dot">&#9679;</span> 1.2k followers</div>
+        <span>Updated 2h ago</span>
+      </div>
+    </div>
+
+    <div class="watchlist-card">
+      <div class="wl-header">
+        <div class="wl-icon">&#9889;</div>
+        <div>
+          <div class="wl-name">AI Infrastructure Picks</div>
+          <div class="wl-author">by @techdeep</div>
+        </div>
+      </div>
+      <div class="wl-stocks">
+        <span class="wl-ticker">NVDA</span>
+        <span class="wl-ticker">AVGO</span>
+        <span class="wl-ticker">MRVL</span>
+        <span class="wl-ticker">AMD</span>
+        <span class="wl-ticker">+5</span>
+      </div>
+      <div class="wl-footer">
+        <div class="wl-followers"><span class="wl-dot">&#9679;</span> 3.4k followers</div>
+        <span>Updated 1d ago</span>
+      </div>
+    </div>
+
+    <div class="watchlist-card">
+      <div class="wl-header">
+        <div class="wl-icon">&#127968;</div>
+        <div>
+          <div class="wl-name">ASX Dividend Kings</div>
+          <div class="wl-author">by @aussieyield</div>
+        </div>
+      </div>
+      <div class="wl-stocks">
+        <span class="wl-ticker">BHP</span>
+        <span class="wl-ticker">CBA</span>
+        <span class="wl-ticker">WES</span>
+        <span class="wl-ticker">FMG</span>
+        <span class="wl-ticker">+8</span>
+      </div>
+      <div class="wl-footer">
+        <div class="wl-followers"><span class="wl-dot">&#9679;</span> 890 followers</div>
+        <span>Updated 5h ago</span>
+      </div>
+    </div>
+
+    <div class="watchlist-card">
+      <div class="wl-header">
+        <div class="wl-icon">&#127758;</div>
+        <div>
+          <div class="wl-name">European Value Gems</div>
+          <div class="wl-author">by @stuart_roberts</div>
+        </div>
+      </div>
+      <div class="wl-stocks">
+        <span class="wl-ticker">ASML</span>
+        <span class="wl-ticker">SAP</span>
+        <span class="wl-ticker">LVMH</span>
+        <span class="wl-ticker">NOVO</span>
+        <span class="wl-ticker">+6</span>
+      </div>
+      <div class="wl-footer">
+        <div class="wl-followers"><span class="wl-dot">&#9679;</span> 2.1k followers</div>
+        <span>Updated 3h ago</span>
+      </div>
+    </div>
+
+    <div class="watchlist-card">
+      <div class="wl-header">
+        <div class="wl-icon">&#128267;</div>
+        <div>
+          <div class="wl-name">Clean Energy 2026</div>
+          <div class="wl-author">by @greeninvestor</div>
+        </div>
+      </div>
+      <div class="wl-stocks">
+        <span class="wl-ticker">ENPH</span>
+        <span class="wl-ticker">SEDG</span>
+        <span class="wl-ticker">NEE</span>
+        <span class="wl-ticker">FSLR</span>
+        <span class="wl-ticker">+4</span>
+      </div>
+      <div class="wl-footer">
+        <div class="wl-followers"><span class="wl-dot">&#9679;</span> 650 followers</div>
+        <span>Updated 8h ago</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== SWIMLANE 4: Stocks Investors Are Watching ==================== -->
+  <div class="section-header">
+    <span class="section-title">Stocks Investors Are Watching</span>
+    <a class="view-all" href="#">See all trending &#8594;</a>
+  </div>
+
+  <div class="social-proof-lane">
+    <div class="sp-card">
+      <div class="sp-ticker-row">
+        <div class="sp-logo">LLY</div>
+        <div>
+          <div class="sp-ticker">Eli Lilly</div>
+          <div class="sp-name">NYSE: LLY</div>
+        </div>
+      </div>
+      <div class="sp-signal"><span class="num">78</span> investors watchlisted this week</div>
+      <div class="sp-context">&#8593; 34% vs. last week</div>
+    </div>
+
+    <div class="sp-card">
+      <div class="sp-ticker-row">
+        <div class="sp-logo">NVDA</div>
+        <div>
+          <div class="sp-ticker">NVIDIA</div>
+          <div class="sp-name">NASDAQ: NVDA</div>
+        </div>
+      </div>
+      <div class="sp-signal"><span class="num">156</span> investors watchlisted this week</div>
+      <div class="sp-context">Most watchlisted stock</div>
+    </div>
+
+    <div class="sp-card">
+      <div class="sp-ticker-row">
+        <div class="sp-logo">TSLA</div>
+        <div>
+          <div class="sp-ticker">Tesla</div>
+          <div class="sp-name">NASDAQ: TSLA</div>
+        </div>
+      </div>
+      <div class="sp-signal"><span class="num">92</span> investors watchlisted this week</div>
+      <div class="sp-context">&#8593; 58% vs. last week</div>
+    </div>
+
+    <div class="sp-card">
+      <div class="sp-ticker-row">
+        <div class="sp-logo">PLTR</div>
+        <div>
+          <div class="sp-ticker">Palantir</div>
+          <div class="sp-name">NASDAQ: PLTR</div>
+        </div>
+      </div>
+      <div class="sp-signal"><span class="num">64</span> investors watchlisted this week</div>
+      <div class="sp-context">New in top 10 this week</div>
+    </div>
+
+    <div class="sp-card">
+      <div class="sp-ticker-row">
+        <div class="sp-logo">ASML</div>
+        <div>
+          <div class="sp-ticker">ASML</div>
+          <div class="sp-name">AMS: ASML</div>
+        </div>
+      </div>
+      <div class="sp-signal"><span class="num">41</span> investors watchlisted this week</div>
+      <div class="sp-context">&#8593; 22% vs. last week</div>
+    </div>
+  </div>
+
+  <!-- ==================== SWIMLANE 6: Popular Rooms ==================== -->
+  <div class="section-header">
+    <span class="section-title">Popular Rooms</span>
+    <a class="view-all" href="#">View all &#8594;</a>
+  </div>
+
+  <div class="swimlane">
+    <div class="room-card">
+      <div class="room-header">
+        <div class="room-stock-icon">NVDA</div>
+        <div>
+          <div class="room-name">NVIDIA Room</div>
+          <div class="room-ticker">NASDAQ: NVDA</div>
+        </div>
+      </div>
+      <div class="room-activity">
+        <span class="room-live-dot"></span>
+        <span class="room-live-text">Active now</span>
+        <span class="room-members">· 42 members online</span>
+      </div>
+      <div class="room-threads">
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Q1 earnings beat expectations — what's your price target?</span>
+          <span class="room-thread-count">38</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Blackwell demand vs. supply constraints in H2</span>
+          <span class="room-thread-count">21</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Is NVDA still undervalued at $305?</span>
+          <span class="room-thread-count">15</span>
+        </div>
+      </div>
+      <div class="room-join">Join Room</div>
+    </div>
+
+    <div class="room-card">
+      <div class="room-header">
+        <div class="room-stock-icon">TSLA</div>
+        <div>
+          <div class="room-name">Tesla Room</div>
+          <div class="room-ticker">NASDAQ: TSLA</div>
+        </div>
+      </div>
+      <div class="room-activity">
+        <span class="room-live-dot"></span>
+        <span class="room-live-text">Active now</span>
+        <span class="room-members">· 31 members online</span>
+      </div>
+      <div class="room-threads">
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Robotaxi timeline — realistic or aspirational?</span>
+          <span class="room-thread-count">52</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Energy storage revenue growing faster than EVs</span>
+          <span class="room-thread-count">18</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Model 2 production ramp — any credible sources?</span>
+          <span class="room-thread-count">9</span>
+        </div>
+      </div>
+      <div class="room-join">Join Room</div>
+    </div>
+
+    <div class="room-card">
+      <div class="room-header">
+        <div class="room-stock-icon">LLY</div>
+        <div>
+          <div class="room-name">Eli Lilly Room</div>
+          <div class="room-ticker">NYSE: LLY</div>
+        </div>
+      </div>
+      <div class="room-activity">
+        <span class="room-live-dot"></span>
+        <span class="room-live-text">Active now</span>
+        <span class="room-members">· 19 members online</span>
+      </div>
+      <div class="room-threads">
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">GLP-1 market share — LLY vs. NVO long term</span>
+          <span class="room-thread-count">27</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Pipeline beyond obesity: Alzheimer's data incoming</span>
+          <span class="room-thread-count">14</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Fair value at $1,000+? Show me the math</span>
+          <span class="room-thread-count">11</span>
+        </div>
+      </div>
+      <div class="room-join">Join Room</div>
+    </div>
+
+    <div class="room-card">
+      <div class="room-header">
+        <div class="room-stock-icon">ASML</div>
+        <div>
+          <div class="room-name">ASML Room</div>
+          <div class="room-ticker">AMS: ASML</div>
+        </div>
+      </div>
+      <div class="room-activity">
+        <span class="room-live-dot"></span>
+        <span class="room-live-text">Active now</span>
+        <span class="room-members">· 12 members online</span>
+      </div>
+      <div class="room-threads">
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">China export restrictions — real impact on orders?</span>
+          <span class="room-thread-count">19</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">High-NA EUV adoption timeline for 2nm</span>
+          <span class="room-thread-count">8</span>
+        </div>
+        <div class="room-thread">
+          <span class="room-thread-dot"></span>
+          <span class="room-thread-title">Monopoly premium — how much is too much?</span>
+          <span class="room-thread-count">6</span>
+        </div>
+      </div>
+      <div class="room-join">Join Room</div>
+    </div>
+  </div>
+
+  <!-- ==================== FEED SECTION (bottom half) ==================== -->
+  <div class="feed-section">
+    <div class="section-header" style="margin-top: 0;">
+      <span class="section-title">Narratives</span>
+      <a class="view-all" href="#">+ Create a narrative</a>
+    </div>
+
+    <div class="feed-tabs">
+      <div class="feed-tab active">For You</div>
+      <div class="feed-tab">Popular</div>
+      <div class="feed-tab">Undervalued</div>
+      <div class="feed-tab">Recent</div>
+    </div>
+
+    <!-- Featured Narrative (pinned first in feed) -->
+    <div class="feed-card featured-narrative">
+      <div class="feed-main">
+        <div class="feed-author">
+          <div class="feed-author-av"></div>
+          <span class="feed-author-name">stuart_roberts</span>
+          <span class="feed-author-time">· 1 hour ago</span>
+          <span class="feed-featured-label">Featured</span>
+        </div>
+        <div class="feed-stock-logo">
+          <div class="stock-icon">UGD</div>
+          <span class="stock-label">Upside Gold · TSXV: UGD</span>
+        </div>
+        <div class="feed-title">An Undervalued 3.3Moz Gold Project in Canada</div>
+        <div class="feed-excerpt">Key takeaways: Upside Gold is developing the Kenia Gold Project, with significant resource potential in a favorable jurisdiction and compelling valuation metrics...</div>
+        <div class="feed-social-proof">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+          45 investors added UGD to their watchlist this week
+        </div>
+        <div class="feed-stats">
+          <span>12.6k views</span>
+          <span>29 likes</span>
+          <span>204 comments</span>
+        </div>
+      </div>
+      <div class="feed-valuation">
+        <div class="feed-val-price">CA$5.07</div>
+        <div class="feed-val-tag">75.3% undervalued</div>
+      </div>
+    </div>
+
+    <!-- Feed Card 1 -->
+    <div class="feed-card">
+      <div class="feed-main">
+        <div class="feed-author">
+          <div class="feed-author-av"></div>
+          <span class="feed-author-name">Hedgehog</span>
+          <span class="feed-author-time">· 2 hours ago</span>
+        </div>
+        <div class="feed-stock-logo">
+          <div class="stock-icon">CSTM</div>
+          <span class="stock-label">Constellium SE · NYSE: CSTM</span>
+        </div>
+        <div class="feed-title">Constellium jet another cyclical aluminum processor, or a mispriced aluminum...</div>
+        <div class="feed-excerpt">Rating: Buy / Value-Oriented Cyclical Compounder. Style: Materials / industrial value with strong free cash flow generation and a demonstrated track record...</div>
+        <div class="feed-social-proof">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+          23 investors added CSTM to their watchlist this week
+        </div>
+        <div class="feed-stats">
+          <span>52 views</span>
+          <span>6 likes</span>
+          <span>3 comments</span>
+        </div>
+      </div>
+      <div class="feed-valuation">
+        <div class="feed-val-price">US$34</div>
+        <div class="feed-val-tag">63.5% undervalued</div>
+      </div>
+    </div>
+
+    <!-- Feed Card 2 -->
+    <div class="feed-card">
+      <div class="feed-main">
+        <div class="feed-author">
+          <div class="feed-author-av"></div>
+          <span class="feed-author-name">BrandonRM4</span>
+          <span class="feed-author-time">· 5 hours ago</span>
+        </div>
+        <div class="feed-stock-logo">
+          <div class="stock-icon">LWLG</div>
+          <span class="stock-label">Lightwave Logic · NASDAQ: LWLG</span>
+        </div>
+        <div class="feed-title">Pre Commercialization optimism — Lightwave Logic</div>
+        <div class="feed-excerpt">Lightwave Logic is transitioning from a research-focused entity to a commercial one, with meaningful volume production and licensing agreements now in play...</div>
+        <div class="feed-stats">
+          <span>193 views</span>
+          <span>4 likes</span>
+          <span>3 comments</span>
+        </div>
+      </div>
+      <div class="feed-valuation">
+        <div class="feed-val-price">US$14.5</div>
+        <div class="feed-val-tag">42.9% undervalued</div>
+      </div>
+    </div>
+
+    <!-- Feed Card 3 -->
+    <div class="feed-card">
+      <div class="feed-main">
+        <div class="feed-author">
+          <div class="feed-author-av"></div>
+          <span class="feed-author-name">KingmanH52</span>
+          <span class="feed-author-time">· 8 hours ago</span>
+        </div>
+        <div class="feed-stock-logo">
+          <div class="stock-icon">NVDA</div>
+          <span class="stock-label">NVIDIA Corp · NASDAQ: NVDA</span>
+        </div>
+        <div class="feed-title">NVIDIA will see a profit margin surge of 55% in the next 5 years</div>
+        <div class="feed-excerpt">The Undisputed King of AI Infrastructure: NVIDIA's dominance in the AI chip market is not merely a position of strength, it is a structural advantage...</div>
+        <div class="feed-social-proof">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 .25a.75.75 0 01.673.418l1.882 3.815 4.21.612a.75.75 0 01.416 1.279l-3.046 2.97.719 4.192a.75.75 0 01-1.088.791L8 12.347l-3.766 1.98a.75.75 0 01-1.088-.79l.72-4.194L.818 6.374a.75.75 0 01.416-1.28l4.21-.611L7.327.668A.75.75 0 018 .25z"/></svg>
+          156 investors added NVDA to their watchlist this week — most watchlisted
+        </div>
+        <div class="feed-stats">
+          <span>68 views</span>
+          <span>5 likes</span>
+          <span>2 comments</span>
+        </div>
+      </div>
+      <div class="feed-valuation">
+        <div class="feed-val-price">US$305.25</div>
+        <div class="feed-val-tag">40.4% undervalued</div>
+      </div>
+    </div>
+
+    <!-- Load more -->
+    <div style="text-align: center; padding: 24px 0;">
+      <span style="font-size: 13px; color: #888; cursor: pointer;">Loading more narratives...</span>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
