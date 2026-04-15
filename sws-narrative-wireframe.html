@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simply Wall St — Narrative Page Wireframe</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f5f5; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+  /* Reading progress bar */
+  .read-progress { position: fixed; top: 0; left: 0; height: 3px; width: 38%; background: #2563eb; z-index: 200; transition: width 0.2s; }
+
+  /* Wireframe banner */
+  .wf-banner { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 32px; display: flex; align-items: center; justify-content: center; }
+  .wf-label { font-size: 12px; color: #888; }
+  .wf-label strong { color: #1a1a1a; }
+
+  /* Top Nav */
+  .nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 12px 32px; display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-weight: 700; font-size: 16px; color: #1a1a1a; }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a { color: #888; text-decoration: none; font-size: 13px; }
+  .nav-links a.active { color: #1a1a1a; font-weight: 600; border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
+  .nav-search { margin-left: auto; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; width: 240px; }
+
+  /* Sticky valuation bar (appears on scroll) */
+  .sticky-val-bar { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 32px; display: flex; align-items: center; gap: 16px; position: sticky; top: 53px; z-index: 99; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+  .svb-logo { width: 28px; height: 28px; border-radius: 6px; background: #f5f5f5; border: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: #888; }
+  .svb-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .svb-ticker { font-size: 11px; color: #888; }
+  .svb-divider { width: 1px; height: 24px; background: #e0e0e0; }
+  .svb-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #888; margin-bottom: 2px; }
+  .svb-value { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+  .svb-value.fv { color: #2563eb; }
+  .svb-tag { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; background: #f0fdf4; color: #16a34a; }
+  .svb-cta { margin-left: auto; background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .svb-cta:hover { background: #1d4ed8; }
+
+  /* Set Fair Value adoption button (the primary action) */
+  .set-fv-btn { display: inline-flex; align-items: center; gap: 10px; background: #fde68a; color: #92400e; border: 1px solid #fcd34d; border-radius: 10px; padding: 9px 18px; font-weight: 700; font-size: 13px; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+  .set-fv-btn:hover { background: #fcd34d; }
+  .set-fv-btn .adopters { display: flex; align-items: center; gap: 5px; font-weight: 700; padding-right: 10px; border-right: 1px solid #fcd34d80; }
+  .set-fv-btn .adopters svg { width: 14px; height: 14px; }
+  .set-fv-btn.large { padding: 14px 24px; font-size: 15px; border-radius: 12px; }
+
+  /* Price chart hero */
+  .price-hero { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 22px 24px; margin-bottom: 24px; }
+  .ph-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; gap: 24px; }
+  .ph-stats { display: flex; gap: 32px; }
+  .ph-stat { display: flex; flex-direction: column; gap: 4px; }
+  .ph-stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .ph-stat-value { font-size: 22px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+  .ph-stat-value.fv { color: #2563eb; }
+  .ph-stat-sub { font-size: 11px; color: #16a34a; font-weight: 600; margin-top: 2px; }
+  .ph-period { display: flex; gap: 4px; background: #f5f5f5; border-radius: 8px; padding: 3px; }
+  .ph-period-btn { background: none; border: none; padding: 6px 12px; font-size: 11px; color: #888; font-weight: 600; cursor: pointer; border-radius: 6px; }
+  .ph-period-btn.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .ph-chart { position: relative; height: 140px; background: linear-gradient(to bottom, #eff6ff 0%, transparent 100%); border-radius: 8px; overflow: hidden; }
+  .ph-chart svg { display: block; width: 100%; height: 100%; }
+  .ph-chart-marker { position: absolute; right: 12%; top: 8px; background: #2563eb; color: #fff; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
+  .ph-chart-marker::after { content: ''; position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid #2563eb; }
+  .ph-legend { display: flex; gap: 18px; margin-top: 14px; font-size: 11px; color: #888; }
+  .ph-legend-item { display: flex; align-items: center; gap: 6px; }
+  .ph-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .ph-legend-dot.price { background: #16a34a; }
+  .ph-legend-dot.fv { background: #2563eb; }
+
+  /* Valuator card (author assumptions) */
+  .valuator-card { background: #fff; border: 2px solid #2563eb; border-radius: 14px; padding: 26px 28px; margin: 36px 0 0 0; }
+  .val-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 22px; gap: 16px; }
+  .val-title-block { flex: 1; }
+  .val-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #2563eb; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+  .val-fv-row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .val-fv-author { font-size: 14px; color: #888; font-weight: 500; }
+  .val-fv-author strong { color: #1a1a1a; font-weight: 700; }
+  .val-fv-price { font-size: 38px; font-weight: 800; color: #1a1a1a; line-height: 1; }
+  .val-fv-tag { font-size: 12px; color: #16a34a; font-weight: 700; }
+  .val-explain { font-size: 13px; color: #555; line-height: 1.55; margin-bottom: 22px; }
+  .val-explain strong { color: #1a1a1a; }
+
+  /* Valuator assumptions chart */
+  .val-chart-section { margin-bottom: 22px; }
+  .val-chart-label { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #1a1a1a; font-weight: 600; margin-bottom: 12px; }
+  .val-chart-label .val-period-select { background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 4px 10px; font-size: 12px; color: #1a1a1a; cursor: pointer; }
+  .val-chart { height: 160px; background: #f9fafb; border: 1px solid #f0f0f0; border-radius: 10px; padding: 16px; position: relative; }
+  .val-chart svg { display: block; width: 100%; height: 100%; }
+  .val-chart-legend { position: absolute; top: 12px; left: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .val-chart-legend-item { font-size: 11px; font-weight: 600; }
+  .val-chart-legend-item.rev { color: #2563eb; }
+  .val-chart-legend-item.earn { color: #16a34a; }
+
+  /* Valuator tabs */
+  .val-tabs { display: flex; gap: 4px; background: #f5f5f5; border-radius: 10px; padding: 4px; margin-bottom: 16px; }
+  .val-tab { flex: 1; padding: 10px 14px; font-size: 12px; color: #888; font-weight: 600; cursor: pointer; border-radius: 8px; text-align: center; }
+  .val-tab.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+
+  /* Valuator inputs */
+  .val-inputs { display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
+  .val-input-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: #f9fafb; border: 1px solid #f0f0f0; border-radius: 10px; }
+  .val-input-label { font-size: 13px; color: #555; font-weight: 600; flex: 1; }
+  .val-input-field { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 13px; color: #1a1a1a; font-family: inherit; min-width: 180px; text-align: right; font-weight: 600; }
+  .val-input-help { font-size: 11px; color: #888; }
+
+  .val-cta-row { display: flex; gap: 12px; align-items: center; padding-top: 18px; border-top: 1px solid #f0f0f0; }
+  .val-cta-info { font-size: 12px; color: #888; flex: 1; }
+  .val-cta-info strong { color: #1a1a1a; }
+
+  /* Page container — single column, no sidebar */
+  .page { max-width: 760px; margin: 0 auto; padding: 32px 32px 80px; }
+
+  /* Breadcrumb */
+  .breadcrumb { font-size: 12px; color: #888; margin-bottom: 20px; }
+  .breadcrumb a { color: #2563eb; text-decoration: none; }
+
+  /* Title */
+  .narrative-title { font-size: 32px; font-weight: 700; line-height: 1.2; color: #1a1a1a; margin-bottom: 20px; }
+
+  /* Promoted author block */
+  .author-block { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; margin-bottom: 16px; }
+  .author-av { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #c4b5fd, #818cf8); flex-shrink: 0; }
+  .author-info { flex: 1; min-width: 0; }
+  .author-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .author-name { font-size: 15px; font-weight: 700; color: #1a1a1a; }
+  .recommended-badge { font-size: 9px; background: #2563eb15; color: #2563eb; padding: 2px 7px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .author-meta { display: flex; gap: 14px; font-size: 12px; color: #888; }
+  .author-meta strong { color: #1a1a1a; font-weight: 600; }
+  .author-meta .accuracy { color: #16a34a; font-weight: 600; }
+  .author-subscribe { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 8px 18px; font-weight: 600; font-size: 13px; cursor: pointer; flex-shrink: 0; }
+  .author-subscribe:hover { background: #1d4ed8; }
+
+  /* Meta row (reading time, views, date) */
+  .meta-row { display: flex; align-items: center; gap: 18px; font-size: 13px; color: #888; margin-bottom: 24px; padding: 0 4px; }
+  .meta-row .meta-item { display: flex; align-items: center; gap: 5px; }
+  .meta-row .meta-dot { width: 3px; height: 3px; border-radius: 50%; background: #ccc; }
+
+  /* Latest update banner (above title) */
+  .update-banner { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 1px solid #fcd34d; border-radius: 12px; padding: 14px 20px; margin-bottom: 20px; position: relative; }
+  .update-banner-icon { width: 36px; height: 36px; border-radius: 10px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; border: 1px solid #fcd34d; }
+  .update-banner-content { flex: 1; min-width: 0; }
+  .update-banner-meta { font-size: 11px; color: #92400e; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .update-banner-title { font-size: 14px; font-weight: 600; color: #1a1a1a; line-height: 1.4; }
+  .update-banner-cta { background: #1a1a1a; color: #fff; border: none; border-radius: 8px; padding: 9px 16px; font-weight: 600; font-size: 12px; cursor: pointer; flex-shrink: 0; white-space: nowrap; }
+  .update-banner-cta:hover { background: #000; }
+  .update-banner-dismiss { background: none; border: none; color: #92400e; cursor: pointer; font-size: 18px; padding: 0 4px; opacity: 0.6; }
+  .update-banner-dismiss:hover { opacity: 1; }
+
+  /* Series card (replaces timeline) */
+  .series-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px 24px; margin-bottom: 28px; }
+  .series-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #f0f0f0; }
+  .series-title { font-size: 13px; font-weight: 700; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
+  .series-meta { font-size: 12px; color: #888; }
+  .series-list { position: relative; padding-left: 4px; }
+  .series-item { display: flex; gap: 16px; padding: 12px; margin: 0 -12px; border-radius: 10px; cursor: pointer; transition: background 0.15s, border-color 0.15s; border: 1px solid transparent; position: relative; }
+  .series-item:hover { background: #f9fafb; border-color: #2563eb; }
+  .series-item.current { background: #eff6ff; border-color: #c7d2fe; }
+  .series-item.current:hover { border-color: #2563eb; }
+  .series-dot-wrap { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; padding-top: 4px; position: relative; }
+  .series-dot { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 2px solid #d4d4d4; z-index: 2; }
+  .series-item.current .series-dot { background: #2563eb; border-color: #2563eb; box-shadow: 0 0 0 4px #2563eb22; }
+  .series-item.update .series-dot { border-color: #2563eb; }
+  .series-item.update.new .series-dot { background: #16a34a; border-color: #16a34a; box-shadow: 0 0 0 4px #16a34a22; animation: pulse-green 2s infinite; }
+  @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 0 4px #16a34a22; } 50% { box-shadow: 0 0 0 8px #16a34a11; } }
+  .series-line { width: 2px; flex: 1; background: #e0e0e0; margin-top: 4px; min-height: 20px; }
+  .series-item:last-child .series-line { display: none; }
+  .series-content { flex: 1; min-width: 0; padding-bottom: 4px; }
+  .series-row1 { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; flex-wrap: wrap; }
+  .series-date { font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
+  .series-type { font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .series-type.original { background: #f3f4f6; color: #555; }
+  .series-type.update { background: #2563eb15; color: #2563eb; }
+  .series-current-tag { font-size: 10px; background: #2563eb; color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .series-new-tag { font-size: 10px; background: #16a34a; color: #fff; padding: 2px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+  .series-item-title { font-size: 14px; font-weight: 600; color: #1a1a1a; line-height: 1.4; margin-bottom: 4px; }
+  .series-item-excerpt { font-size: 12px; color: #888; line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+  .series-item-meta { font-size: 11px; color: #888; margin-top: 6px; }
+
+  /* Sticky bar updates pill */
+  .svb-updates-pill { display: flex; align-items: center; gap: 6px; background: #fef3c7; border: 1px solid #fcd34d; color: #92400e; padding: 5px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.3px; transition: all 0.15s; }
+  .svb-updates-pill:hover { background: #fde68a; }
+  .svb-updates-pill .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; animation: pulse-dot 2s infinite; }
+  @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Counterpoint card — alternative narrative with different FV */
+  .counterpoint-card { background: #fff; border: 1px solid #e0e0e0; border-left: 4px solid #f59e0b; border-radius: 12px; padding: 22px 24px; margin-top: 20px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+  .counterpoint-card:hover { box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12); border-color: #f59e0b; border-left-color: #f59e0b; }
+  .cp-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #92400e; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .cp-body { display: flex; gap: 18px; align-items: flex-start; }
+  .cp-author-av { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #d97706); flex-shrink: 0; }
+  .cp-content { flex: 1; min-width: 0; }
+  .cp-author-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .cp-author-name { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .cp-author-meta { font-size: 12px; color: #888; }
+  .cp-title { font-size: 15px; font-weight: 700; color: #1a1a1a; line-height: 1.4; margin-bottom: 8px; }
+  .cp-snippet { font-size: 13px; color: #555; line-height: 1.55; font-style: italic; margin-bottom: 14px; padding-left: 12px; border-left: 2px solid #fcd34d; }
+  .cp-fv-row { display: flex; align-items: center; gap: 16px; padding: 12px 14px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 10px; margin-bottom: 14px; }
+  .cp-fv-block { flex: 1; }
+  .cp-fv-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #92400e; font-weight: 700; margin-bottom: 2px; }
+  .cp-fv-value { font-size: 18px; font-weight: 800; color: #1a1a1a; }
+  .cp-fv-delta { font-size: 11px; color: #92400e; font-weight: 600; }
+  .cp-fv-vs { font-size: 11px; color: #888; }
+  .cp-fv-vs strong { color: #1a1a1a; }
+  .cp-cta { font-size: 13px; color: #2563eb; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+
+  /* Continue reading footer card */
+  .continue-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 22px 24px; margin-top: 36px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+  .continue-card:hover { border-color: #2563eb; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08); }
+  .continue-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #2563eb; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .continue-inner { display: flex; align-items: center; gap: 16px; padding: 16px; background: #f9fafb; border-radius: 10px; border: 1px solid #f0f0f0; }
+  .continue-icon { width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, #2563eb, #1d4ed8); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 20px; flex-shrink: 0; }
+  .continue-info { flex: 1; min-width: 0; }
+  .continue-meta { font-size: 11px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .continue-title { font-size: 15px; font-weight: 700; color: #1a1a1a; line-height: 1.35; margin-bottom: 4px; }
+  .continue-stats { font-size: 12px; color: #888; }
+  .continue-arrow { font-size: 22px; color: #2563eb; flex-shrink: 0; }
+
+  /* AI Summary card */
+  .ai-summary { background: linear-gradient(135deg, #f5f3ff, #eff6ff); border: 1px solid #c7d2fe; border-radius: 12px; padding: 22px 24px; margin-bottom: 28px; position: relative; }
+  .ai-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .ai-title { font-size: 13px; font-weight: 700; color: #1a1a1a; display: flex; align-items: center; gap: 8px; }
+  .ai-icon { width: 22px; height: 22px; border-radius: 6px; background: linear-gradient(135deg, #818cf8, #6366f1); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13px; font-weight: 700; }
+  .ai-tag { font-size: 9px; background: #fff; color: #6366f1; padding: 2px 7px; border-radius: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #c7d2fe; }
+  .ai-collapse { font-size: 12px; color: #6366f1; cursor: pointer; }
+  .ai-bullets { list-style: none; padding: 0; margin: 0; }
+  .ai-bullet { display: flex; gap: 12px; padding: 9px 0; border-bottom: 1px solid #e0e7ff; font-size: 14px; line-height: 1.5; color: #1a1a1a; }
+  .ai-bullet:last-child { border-bottom: none; padding-bottom: 0; }
+  .ai-bullet:first-child { padding-top: 0; }
+  .ai-bullet-icon { width: 20px; height: 20px; border-radius: 6px; background: #fff; border: 1px solid #c7d2fe; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 11px; }
+
+  /* Body content */
+  .narrative-body { font-size: 16px; line-height: 1.65; color: #1a1a1a; }
+  .narrative-body h2 { font-size: 22px; font-weight: 700; margin-top: 36px; margin-bottom: 14px; color: #1a1a1a; scroll-margin-top: 120px; }
+  .narrative-body h2:first-child { margin-top: 0; }
+  .narrative-body p { margin-bottom: 16px; color: #333; }
+  .narrative-body ul { margin: 0 0 16px 20px; color: #333; }
+  .narrative-body ul li { margin-bottom: 8px; }
+  .narrative-body strong { color: #1a1a1a; font-weight: 700; }
+
+  /* Inline chart placeholder */
+  .chart-placeholder { background: #fafafa; border: 1px dashed #d4d4d4; border-radius: 12px; padding: 60px 20px; margin: 24px 0; text-align: center; color: #888; font-size: 12px; }
+
+  /* Discussion preview (latest comment) */
+  .discussion-preview { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 18px 22px; margin: 32px 0; }
+  .dp-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .dp-title { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .dp-count { font-size: 12px; color: #888; }
+  .dp-comment { display: flex; gap: 12px; }
+  .dp-av { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #f59e0b); flex-shrink: 0; }
+  .dp-content { flex: 1; min-width: 0; }
+  .dp-author-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .dp-author { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+  .dp-time { font-size: 11px; color: #888; }
+  .dp-text { font-size: 13px; color: #333; line-height: 1.5; }
+  .dp-cta { margin-top: 12px; font-size: 13px; color: #2563eb; cursor: pointer; font-weight: 500; }
+
+  /* Comments section */
+  .comments-section { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px; margin-top: 32px; }
+  .comments-header { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: #1a1a1a; }
+  .comment-input { width: 100%; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #888; font-family: inherit; }
+  .comment-row { display: flex; gap: 12px; padding: 16px 0; border-bottom: 1px solid #f5f5f5; }
+  .comment-row:last-child { border-bottom: none; }
+  .comment-av { width: 32px; height: 32px; border-radius: 50%; background: #d4d4d4; flex-shrink: 0; }
+  .comment-content { flex: 1; }
+  .comment-author { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .comment-text { font-size: 13px; color: #333; line-height: 1.5; }
+
+  /* TOC strip on right (floating, optional) */
+  .floating-toc { position: fixed; right: 32px; top: 180px; width: 200px; font-size: 12px; }
+  .floating-toc-title { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: #888; font-weight: 700; margin-bottom: 12px; padding-left: 12px; }
+  .toc-item { display: block; padding: 6px 12px; color: #888; text-decoration: none; border-left: 2px solid #e0e0e0; line-height: 1.4; transition: all 0.15s; }
+  .toc-item:hover { color: #1a1a1a; }
+  .toc-item.active { color: #2563eb; border-left-color: #2563eb; font-weight: 600; }
+  @media (max-width: 1200px) { .floating-toc { display: none; } }
+</style>
+</head>
+<body>
+
+<!-- Reading progress bar -->
+<div class="read-progress"></div>
+
+<!-- Wireframe Banner -->
+<div class="wf-banner">
+  <div class="wf-label"><strong>Simply Wall St</strong> — Narrative Page Wireframe (proposed redesign)</div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-logo">Simply Wall St</div>
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Portfolios</a>
+    <a href="#">Watchlist</a>
+    <a href="sws-community-wireframe.html" class="active">Community</a>
+    <a href="#">Discover</a>
+    <a href="#">Screener</a>
+  </div>
+  <input class="nav-search" placeholder="Search companies worldwide..." />
+</nav>
+
+<!-- Sticky valuation bar (replaces the sidebar) -->
+<div class="sticky-val-bar">
+  <div class="svb-logo">GANX</div>
+  <div>
+    <div class="svb-name">Gain Therapeutics</div>
+    <div class="svb-ticker">NASDAQ: GANX</div>
+  </div>
+  <div class="svb-divider"></div>
+  <div>
+    <div class="svb-label">Last price</div>
+    <div class="svb-value">US$1.94</div>
+  </div>
+  <div class="svb-divider"></div>
+  <div>
+    <div class="svb-label">Author Fair Value</div>
+    <div class="svb-value fv">US$70</div>
+  </div>
+  <div class="svb-tag">97.2% undervalued</div>
+  <div class="svb-divider"></div>
+  <a href="#series" class="svb-updates-pill" style="text-decoration:none; margin-left:0;"><span class="pill-dot"></span>3 updates</a>
+  <button class="set-fv-btn" style="margin-left:auto;">
+    <span class="adopters">
+      <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zM2 14s1-3 6-3 6 3 6 3v1H2v-1z"/></svg>
+      89
+    </span>
+    Set Fair Value
+  </button>
+</div>
+
+<!-- Floating TOC -->
+<aside class="floating-toc">
+  <div class="floating-toc-title">In this narrative</div>
+  <a href="#" class="toc-item active">Key Takeaways</a>
+  <a href="#" class="toc-item">What does Gain do?</a>
+  <a href="#" class="toc-item">The thesis</a>
+  <a href="#" class="toc-item">Phase 2 trial design</a>
+  <a href="#" class="toc-item">Pipeline platform</a>
+  <a href="#" class="toc-item">Valuation gap</a>
+  <a href="#" class="toc-item">Risks to consider</a>
+  <a href="#" class="toc-item">Bottom line</a>
+</aside>
+
+<div class="page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="sws-community-wireframe.html">Community</a> / <a href="#">Narratives</a> / Gain Therapeutics
+  </div>
+
+  <!-- Latest Update Banner (only shows when there are unread updates) -->
+  <div class="update-banner">
+    <div class="update-banner-icon">📰</div>
+    <div class="update-banner-content">
+      <div class="update-banner-meta">Latest update · 2 days ago · by stuart_roberts</div>
+      <div class="update-banner-title">Phase 2 enrollment milestone — readout timeline brought forward to Q3 2026</div>
+    </div>
+    <button class="update-banner-cta" onclick="window.location='sws-narrative-wireframe.html'">Read latest update →</button>
+    <button class="update-banner-dismiss" title="Dismiss">×</button>
+  </div>
+
+  <!-- Title -->
+  <h1 class="narrative-title">Gain Therapeutics: The Under-the-Radar Biotech With Big Parkinson's Potential</h1>
+
+  <!-- Promoted Author Block -->
+  <div class="author-block">
+    <div class="author-av"></div>
+    <div class="author-info">
+      <div class="author-name-row">
+        <span class="author-name">stuart_roberts</span>
+        <span class="recommended-badge">Recommended Voice</span>
+      </div>
+      <div class="author-meta">
+        <span><strong>42</strong> narratives</span>
+        <span><strong>28.5k</strong> followers</span>
+        <span class="accuracy">↑ 71% FV accuracy</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Meta row -->
+  <div class="meta-row">
+    <div class="meta-item">📖 6 min read</div>
+    <div class="meta-dot"></div>
+    <div class="meta-item">👁 12.6k views</div>
+    <div class="meta-dot"></div>
+    <div class="meta-item">💬 204 comments</div>
+    <div class="meta-dot"></div>
+    <div class="meta-item">⭐ 89 FV adoptions</div>
+  </div>
+
+  <!-- Price / Fair Value chart hero -->
+  <div class="price-hero">
+    <div class="ph-header">
+      <div class="ph-stats">
+        <div class="ph-stat">
+          <div class="ph-stat-label">Last price · Apr 15</div>
+          <div class="ph-stat-value">US$1.94</div>
+          <div class="ph-stat-sub">↑ 2.2% (7d)</div>
+        </div>
+        <div class="ph-stat">
+          <div class="ph-stat-label">stuart_roberts's Fair Value</div>
+          <div class="ph-stat-value fv">US$70.00</div>
+          <div class="ph-stat-sub">97.2% undervalued</div>
+        </div>
+      </div>
+      <div class="ph-period">
+        <button class="ph-period-btn">1W</button>
+        <button class="ph-period-btn">1M</button>
+        <button class="ph-period-btn">6M</button>
+        <button class="ph-period-btn active">1Y</button>
+        <button class="ph-period-btn">5Y</button>
+      </div>
+    </div>
+    <div class="ph-chart">
+      <div class="ph-chart-marker">FV target $70</div>
+      <svg viewBox="0 0 600 140" preserveAspectRatio="none">
+        <!-- Price line (green, low and slowly rising) -->
+        <path d="M 0 110 L 30 108 L 60 112 L 90 105 L 120 108 L 150 100 L 180 102 L 210 95 L 240 98 L 270 92 L 300 88 L 330 90 L 360 85 L 390 82 L 420 80 L 450 78 L 480 75 L 510 73 L 540 70 L 570 68 L 600 65" fill="none" stroke="#16a34a" stroke-width="2"/>
+        <!-- Subtle area fill under price -->
+        <path d="M 0 110 L 30 108 L 60 112 L 90 105 L 120 108 L 150 100 L 180 102 L 210 95 L 240 98 L 270 92 L 300 88 L 330 90 L 360 85 L 390 82 L 420 80 L 450 78 L 480 75 L 510 73 L 540 70 L 570 68 L 600 65 L 600 140 L 0 140 Z" fill="#16a34a" opacity="0.08"/>
+        <!-- FV horizontal target line (blue dashed) -->
+        <line x1="0" y1="20" x2="600" y2="20" stroke="#2563eb" stroke-width="2" stroke-dasharray="6 4"/>
+        <!-- Current price dot -->
+        <circle cx="600" cy="65" r="5" fill="#16a34a" stroke="#fff" stroke-width="2"/>
+        <!-- FV target dot -->
+        <circle cx="600" cy="20" r="5" fill="#2563eb" stroke="#fff" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="ph-legend">
+      <div class="ph-legend-item"><div class="ph-legend-dot price"></div>Last price</div>
+      <div class="ph-legend-item"><div class="ph-legend-dot fv"></div>Author's Fair Value</div>
+    </div>
+  </div>
+
+  <!-- Series Card -->
+  <div class="series-card" id="series">
+    <div class="series-header">
+      <div class="series-title">📚 Part of a series</div>
+      <div class="series-meta">4 parts · last updated Apr 14</div>
+    </div>
+    <div class="series-list">
+
+      <div class="series-item current" onclick="window.location='sws-narrative-wireframe.html'">
+        <div class="series-dot-wrap">
+          <div class="series-dot"></div>
+          <div class="series-line"></div>
+        </div>
+        <div class="series-content">
+          <div class="series-row1">
+            <span class="series-date">Mar 2</span>
+            <span class="series-type original">Original thesis</span>
+            <span class="series-current-tag">You are reading</span>
+          </div>
+          <div class="series-item-title">Gain Therapeutics: The Under-the-Radar Biotech With Big Parkinson's Potential</div>
+          <div class="series-item-excerpt">The full investment case for GANX, including the Magellan platform, lead asset, and valuation gap.</div>
+        </div>
+      </div>
+
+      <div class="series-item update" onclick="window.location='sws-narrative-wireframe.html'">
+        <div class="series-dot-wrap">
+          <div class="series-dot"></div>
+          <div class="series-line"></div>
+        </div>
+        <div class="series-content">
+          <div class="series-row1">
+            <span class="series-date">Mar 18</span>
+            <span class="series-type update">Update</span>
+          </div>
+          <div class="series-item-title">Phase 1b interim data — biomarker engagement confirmed</div>
+          <div class="series-item-excerpt">Why the Mar 15 readout meaningfully de-risks the Phase 2 trial and what it means for the FV.</div>
+          <div class="series-item-meta">3 min read · 1.2k views · 18 comments</div>
+        </div>
+      </div>
+
+      <div class="series-item update" onclick="window.location='sws-narrative-wireframe.html'">
+        <div class="series-dot-wrap">
+          <div class="series-dot"></div>
+          <div class="series-line"></div>
+        </div>
+        <div class="series-content">
+          <div class="series-row1">
+            <span class="series-date">Apr 9</span>
+            <span class="series-type update">Update</span>
+          </div>
+          <div class="series-item-title">Cash runway & Q1 earnings — why dilution risk just got smaller</div>
+          <div class="series-item-excerpt">Q1 cash burn came in below expectations, extending runway past the Phase 2 readout.</div>
+          <div class="series-item-meta">2 min read · 890 views · 11 comments</div>
+        </div>
+      </div>
+
+      <div class="series-item update new" onclick="window.location='sws-narrative-wireframe.html'">
+        <div class="series-dot-wrap">
+          <div class="series-dot"></div>
+          <div class="series-line"></div>
+        </div>
+        <div class="series-content">
+          <div class="series-row1">
+            <span class="series-date">Apr 14</span>
+            <span class="series-type update">Update</span>
+            <span class="series-new-tag">New</span>
+          </div>
+          <div class="series-item-title">Phase 2 enrollment milestone — readout timeline brought forward to Q3 2026</div>
+          <div class="series-item-excerpt">240-patient enrollment hit ahead of schedule. Implications for the catalyst calendar and FV.</div>
+          <div class="series-item-meta">4 min read · 540 views · 7 comments</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- AI Summary Card -->
+  <div class="ai-summary">
+    <div class="ai-header">
+      <div class="ai-title">
+        <div class="ai-icon">✦</div>
+        TL;DR — Key points
+        <span class="ai-tag">AI generated</span>
+      </div>
+      <span class="ai-collapse">Collapse ▾</span>
+    </div>
+    <ul class="ai-bullets">
+      <li class="ai-bullet">
+        <div class="ai-bullet-icon">💡</div>
+        <div><strong>Thesis:</strong> Gain Therapeutics is developing GT-02287, a first-in-class allosteric enzyme enhancer targeting GBA1-related Parkinson's — addressing ~10–15% of cases with no approved disease-modifying therapy.</div>
+      </li>
+      <li class="ai-bullet">
+        <div class="ai-bullet-icon">🚀</div>
+        <div><strong>Catalyst:</strong> Phase 2 readout expected H2 2026. Phase 1b data already showed biomarker improvement and brain penetrance — de-risking the next trial significantly.</div>
+      </li>
+      <li class="ai-bullet">
+        <div class="ai-bullet-icon">💰</div>
+        <div><strong>Valuation:</strong> Author FV of <strong>US$70</strong> vs. current <strong>US$1.94</strong> — implies 97% upside if the platform is validated. Comparable platform deals (Prevail/Lilly, Vigil) priced at $400M+.</div>
+      </li>
+      <li class="ai-bullet">
+        <div class="ai-bullet-icon">⚠️</div>
+        <div><strong>Risk:</strong> Single Phase 2 trial is binary — failure would crater the stock. Cash runway is ~18 months, so dilution before readout is plausible.</div>
+      </li>
+      <li class="ai-bullet">
+        <div class="ai-bullet-icon">⏱</div>
+        <div><strong>Time horizon:</strong> 12–18 months. This is a high-risk binary catalyst play, not a long-term compounder.</div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Body -->
+  <div class="narrative-body">
+
+    <h2>Key Takeaways</h2>
+    <ul>
+      <li>Gain Therapeutics (NASDAQ: GANX) is a clinical-stage biotech with a first-in-class allosteric enzyme enhancer platform.</li>
+      <li>Lead asset GT-02287 targets GBA1-related Parkinson's — a sub-population with no approved disease-modifying therapy.</li>
+      <li>Recent Phase 1b data showed brain penetrance and biomarker engagement, de-risking the upcoming Phase 2 readout.</li>
+      <li>Comparable platform M&A suggests the current ~$30M market cap is dramatically mispriced relative to scientific validation.</li>
+    </ul>
+
+    <h2>What does Gain Therapeutics do?</h2>
+    <p>Gain Therapeutics is a Maryland-based biotech building a discovery engine called <strong>Magellan</strong>, which identifies allosteric binding sites on misfolded enzymes. Unlike traditional small-molecule drug design that targets active sites, Magellan looks for cryptic pockets that can stabilize a protein's correct shape — restoring normal function.</p>
+    <p>This approach has the potential to address a class of diseases driven by protein misfolding, where the underlying cause is a structural defect rather than overactivity. Parkinson's, Gaucher, and other lysosomal storage disorders all fit this profile.</p>
+
+    <div class="chart-placeholder">[ Pipeline / mechanism diagram ]</div>
+
+    <h2>The thesis</h2>
+    <p>The market for Parkinson's therapies is enormous, but the existing standard of care (levodopa) only manages symptoms — it doesn't slow disease progression. A disease-modifying therapy for even a sub-population (the ~10–15% of patients with GBA1 mutations) would be a transformative outcome both for patients and for whoever owns the molecule.</p>
+    <p>Gain's lead asset GT-02287 is designed to do exactly that. Phase 1b data released in late 2025 demonstrated that the molecule crosses the blood-brain barrier and engages its target — both critical de-risking events ahead of the upcoming Phase 2 trial.</p>
+
+    <h2>Phase 2 trial design</h2>
+    <p>The Phase 2 trial is enrolling 240 patients across 30 sites in the US, EU, and Israel. Primary endpoint is a change in MDS-UPDRS Part III at 52 weeks, with secondary endpoints capturing biomarker movement and quality-of-life measures. The trial is well-powered and uses a placebo arm — a clean readout that the market should find credible regardless of outcome.</p>
+
+    <h2>Pipeline platform</h2>
+    <p>Beyond GT-02287, the Magellan platform has identified candidates for Gaucher disease, GM1 gangliosidosis, and several other rare conditions. Even partial success in Parkinson's would re-rate the platform itself — and the pipeline behind it.</p>
+
+    <div class="chart-placeholder">[ Pipeline timeline chart ]</div>
+
+    <h2>Valuation gap</h2>
+    <p>The current ~$30M market cap implies the market is pricing GT-02287 as essentially worthless. Comparable transactions tell a different story:</p>
+    <ul>
+      <li><strong>Prevail Therapeutics</strong> (acquired by Lilly, 2021) — $880M for a similar GBA1-targeted gene therapy program.</li>
+      <li><strong>Vigil Neuroscience</strong> — $400M+ for a TREM2 program with comparable scientific maturity.</li>
+      <li><strong>Denali Therapeutics</strong> — broader CNS platform priced in the billions despite mixed clinical data.</li>
+    </ul>
+    <p>If GT-02287 reads out positively in Phase 2, the rerating could be 20-30x. Even a partial response that justifies a Phase 3 would likely 5-10x the stock from current levels.</p>
+
+    <h2>Risks to consider</h2>
+    <p><strong>Binary outcome.</strong> A Phase 2 trial in neurodegenerative disease is high-risk by definition. Most Parkinson's disease-modifying programs have failed.</p>
+    <p><strong>Cash runway.</strong> Gain has roughly 18 months of cash. The company will likely need to raise additional capital before the Phase 2 readout, which could be dilutive.</p>
+    <p><strong>Single-asset concentration.</strong> While the Magellan platform is broad, near-term value is concentrated in one molecule and one trial.</p>
+
+    <h2>Bottom line</h2>
+    <p>This is a high-conviction, high-risk asymmetric bet. The platform is scientifically credible, the lead asset is de-risked through Phase 1b, and the comparable transactions suggest the current valuation is dramatically out of line with the opportunity. But it's a binary trial outcome — size accordingly.</p>
+  </div>
+
+  <!-- Valuator: author's assumptions -->
+  <div class="valuator-card">
+    <div class="val-header">
+      <div class="val-title-block">
+        <div class="val-eyebrow">⚙ The author's assumptions</div>
+        <div class="val-fv-row">
+          <span class="val-fv-author"><strong>stuart_roberts's</strong> Fair Value</span>
+        </div>
+        <div class="val-fv-row" style="margin-top:6px;">
+          <div class="val-fv-price">US$70.00</div>
+          <div class="val-fv-tag">97.2% undervalued</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="val-explain">
+      The Fair Value is derived from <strong>5-year forward estimates</strong> for revenue, profit margin, and exit P/E ratio. Edit any of the inputs below to see how the Fair Value changes — when you're happy with it, set it as your own.
+    </div>
+
+    <!-- Future estimation chart -->
+    <div class="val-chart-section">
+      <div class="val-chart-label">
+        Future estimation in
+        <select class="val-period-select">
+          <option>5 Years</option>
+          <option>3 Years</option>
+          <option>10 Years</option>
+        </select>
+      </div>
+      <div class="val-chart">
+        <div class="val-chart-legend">
+          <div class="val-chart-legend-item rev">● Revenue · US$352.6m</div>
+          <div class="val-chart-legend-item earn">● Earnings · US$84.3m</div>
+        </div>
+        <svg viewBox="0 0 600 130" preserveAspectRatio="none">
+          <!-- Past area shaded -->
+          <rect x="0" y="0" width="240" height="130" fill="#f0f0f0" opacity="0.4"/>
+          <!-- Past/Future divider -->
+          <line x1="240" y1="0" x2="240" y2="130" stroke="#d4d4d4" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="120" y="20" font-size="10" fill="#888" text-anchor="middle" font-family="-apple-system, sans-serif">Past</text>
+          <text x="420" y="20" font-size="10" fill="#888" text-anchor="middle" font-family="-apple-system, sans-serif">Future</text>
+          <!-- Revenue line (blue) -->
+          <path d="M 0 115 L 40 113 L 80 110 L 120 108 L 160 105 L 200 102 L 240 100 L 280 95 L 320 88 L 360 78 L 400 65 L 440 50 L 480 35 L 520 22 L 560 14 L 600 8" fill="none" stroke="#2563eb" stroke-width="2.5"/>
+          <!-- Earnings line (green) -->
+          <path d="M 0 118 L 40 120 L 80 122 L 120 120 L 160 118 L 200 116 L 240 115 L 280 110 L 320 102 L 360 92 L 400 80 L 440 68 L 480 55 L 520 45 L 560 40 L 600 36" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+          <!-- End markers -->
+          <circle cx="600" cy="8" r="4" fill="#2563eb" stroke="#fff" stroke-width="2"/>
+          <circle cx="600" cy="36" r="4" fill="#16a34a" stroke="#fff" stroke-width="2"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="val-tabs">
+      <div class="val-tab active">Revenue</div>
+      <div class="val-tab">Profit Margin</div>
+      <div class="val-tab">Future P/E</div>
+    </div>
+
+    <!-- Inputs -->
+    <div class="val-inputs">
+      <div class="val-input-row">
+        <div class="val-input-label">Est. Revenue (5Y)
+          <div class="val-input-help">Author assumes Phase 2 success drives Magellan platform validation</div>
+        </div>
+        <input class="val-input-field" type="text" value="$ 352,614,052" />
+      </div>
+      <div class="val-input-row">
+        <div class="val-input-label">Profit Margin (5Y)
+          <div class="val-input-help">Comparable biotech platform margins post-validation</div>
+        </div>
+        <input class="val-input-field" type="text" value="23.9 %" />
+      </div>
+      <div class="val-input-row">
+        <div class="val-input-label">Future P/E (5Y)
+          <div class="val-input-help">In line with mid-cap CNS biotech peers</div>
+        </div>
+        <input class="val-input-field" type="text" value="18.4 x" />
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="val-cta-row">
+      <div class="val-cta-info"><strong>89 investors</strong> have already adopted these assumptions as their Fair Value.</div>
+      <button class="set-fv-btn large">
+        <span class="adopters">
+          <svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 8a3 3 0 100-6 3 3 0 000 6zM2 14s1-3 6-3 6 3 6 3v1H2v-1z"/></svg>
+          89
+        </span>
+        Set as my Fair Value
+      </button>
+    </div>
+  </div>
+
+  <!-- Counterpoint: another community narrative with a different FV -->
+  <div class="counterpoint-card" onclick="window.location='sws-narrative-wireframe.html'">
+    <div class="cp-eyebrow">⚠ Before you adopt — another community view</div>
+    <div class="cp-body">
+      <div class="cp-author-av"></div>
+      <div class="cp-content">
+        <div class="cp-author-row">
+          <span class="cp-author-name">tripledub</span>
+          <span class="cp-author-meta">· 31 narratives · ↑ 68% FV accuracy</span>
+        </div>
+        <div class="cp-title">Gain Therapeutics: Why I think the Prevail comp is too generous</div>
+        <div class="cp-snippet">"The Phase 1b data is encouraging but Prevail was acquired post-Phase 2 with cleaner biomarker data. Vigil is a more honest comp — and even that's generous given Gain's cash runway. I'm long but with a much tighter FV."</div>
+        <div class="cp-fv-row">
+          <div class="cp-fv-block">
+            <div class="cp-fv-label">tripledub's Fair Value</div>
+            <div class="cp-fv-value">US$38.00</div>
+          </div>
+          <div class="cp-fv-vs">vs. <strong>stuart_roberts $70.00</strong><br>−46% lower</div>
+        </div>
+        <div class="cp-cta">Read tripledub's full narrative →</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Continue reading the series -->
+  <div class="continue-card" onclick="window.location='sws-narrative-wireframe.html'">
+    <div class="continue-label">📚 Continue reading the series</div>
+    <div class="continue-inner">
+      <div class="continue-icon">📰</div>
+      <div class="continue-info">
+        <div class="continue-meta">Update · Mar 18 · Next in series</div>
+        <div class="continue-title">Phase 1b interim data — biomarker engagement confirmed</div>
+        <div class="continue-stats">3 min read · 1.2k views · 18 comments</div>
+      </div>
+      <div class="continue-arrow">→</div>
+    </div>
+  </div>
+
+
+  <!-- Comments section -->
+  <div class="comments-section">
+    <div class="comments-header">All comments (204)</div>
+    <input type="text" class="comment-input" placeholder="Share your thoughts on this narrative..." />
+    <div class="comment-row">
+      <div class="comment-av"></div>
+      <div class="comment-content">
+        <div class="comment-author">Rotbio · 4h ago</div>
+        <div class="comment-text">The Phase 1b biomarker data is the most important point here. If GT-02287 is engaging GBA1 in the brain, that alone justifies a re-rating regardless of the Phase 2 outcome.</div>
+      </div>
+    </div>
+    <div class="comment-row">
+      <div class="comment-av"></div>
+      <div class="comment-content">
+        <div class="comment-author">SimpleMan887 · 6h ago</div>
+        <div class="comment-text">Agree on the asymmetry but worth noting the float is tiny — any institutional buying could move this 30%+ in a day. Adds to the volatility.</div>
+      </div>
+    </div>
+    <div class="comment-row">
+      <div class="comment-av"></div>
+      <div class="comment-content">
+        <div class="comment-author">Aharon · 8h ago</div>
+        <div class="comment-text">What's the timeline on the next data update? Phase 2 readout is the big one but I think there's an interim biomarker analysis in Q3 that could move the stock too.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

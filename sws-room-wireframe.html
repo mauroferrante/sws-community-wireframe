@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simply Wall St — Community Discussions Room</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f5f5; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+  /* Wireframe banner */
+  .wf-banner { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 32px; display: flex; align-items: center; justify-content: center; }
+  .wf-label { font-size: 12px; color: #888; }
+  .wf-label strong { color: #1a1a1a; }
+
+  /* Top Nav */
+  .nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 12px 32px; display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-weight: 700; font-size: 16px; color: #1a1a1a; }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a { color: #888; text-decoration: none; font-size: 13px; }
+  .nav-links a.active { color: #1a1a1a; font-weight: 600; border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
+  .nav-search { margin-left: auto; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; width: 240px; }
+
+  /* Sub-nav */
+  .sub-nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 32px; display: flex; align-items: center; gap: 24px; }
+  .sub-nav a { color: #888; text-decoration: none; font-size: 13px; padding: 12px 0; border-bottom: 2px solid transparent; }
+  .sub-nav a.active { color: #1a1a1a; font-weight: 600; border-bottom-color: #2563eb; }
+
+  /* Room header bar */
+  .room-header-bar { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 18px 32px; display: flex; align-items: center; gap: 18px; position: sticky; top: 53px; z-index: 99; }
+  .rh-icon { width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, #2563eb, #6366f1); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 24px; flex-shrink: 0; }
+  .rh-info { flex: 1; min-width: 0; }
+  .rh-back { font-size: 12px; color: #2563eb; text-decoration: none; margin-bottom: 4px; display: inline-block; }
+  .rh-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .rh-title { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+  .rh-tag { font-size: 10px; background: #2563eb15; color: #2563eb; padding: 2px 8px; border-radius: 6px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .rh-meta { display: flex; align-items: center; gap: 14px; font-size: 13px; color: #888; }
+  .rh-active { display: flex; align-items: center; gap: 6px; color: #16a34a; font-weight: 600; }
+  .rh-dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; }
+  .rh-meta .meta-divider { color: #ccc; }
+  .rh-cta { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 10px 22px; font-weight: 600; font-size: 13px; cursor: pointer; flex-shrink: 0; }
+  .rh-cta:hover { background: #1d4ed8; }
+
+  /* Two-pane layout */
+  .room-body { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 300px 1fr; gap: 24px; padding: 24px 32px 60px; align-items: start; }
+
+  /* Sidebar — threads list */
+  .threads-sidebar { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 16px; position: sticky; top: 160px; max-height: calc(100vh - 180px); overflow-y: auto; }
+  .ts-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; padding: 0 4px; }
+  .ts-title { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .ts-new { font-size: 12px; color: #2563eb; cursor: pointer; font-weight: 600; }
+  .ts-search { width: 100%; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 8px; padding: 8px 12px; font-size: 12px; color: #888; margin-bottom: 14px; }
+  .ts-section-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.6px; color: #888; font-weight: 700; padding: 8px 8px 6px; }
+  .thread-item { display: block; padding: 10px 12px; margin-bottom: 4px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border-left: 3px solid transparent; }
+  .thread-item:hover { background: #f9fafb; }
+  .thread-item.active { background: #eff6ff; border-left-color: #2563eb; }
+  .thread-item.pinned { background: #fffbeb; border-left-color: #f59e0b; }
+  .thread-item.pinned.active { background: #fef3c7; border-left-color: #f59e0b; }
+  .thread-item-row1 { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .thread-pin { font-size: 10px; }
+  .thread-item-title { font-size: 13px; font-weight: 600; color: #1a1a1a; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .thread-item-meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #888; margin-top: 4px; }
+  .thread-active-dot { width: 6px; height: 6px; border-radius: 50%; background: #16a34a; flex-shrink: 0; }
+
+  /* Main pane — active thread */
+  .thread-main { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
+  .thread-header { padding: 24px 28px 20px; border-bottom: 1px solid #f0f0f0; }
+  .th-eyebrow { font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #f59e0b; font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .th-title { font-size: 24px; font-weight: 700; color: #1a1a1a; line-height: 1.3; margin-bottom: 14px; }
+  .th-author-row { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .th-author-av { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #2563eb, #6366f1); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .th-author-info { flex: 1; }
+  .th-author-name { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .th-author-meta { font-size: 12px; color: #888; }
+  .th-author-meta .ends { color: #f59e0b; font-weight: 600; }
+  .th-stats { display: flex; gap: 16px; font-size: 12px; color: #888; margin-top: 12px; }
+  .th-stats strong { color: #1a1a1a; }
+
+  /* Original post body */
+  .th-body { padding: 20px 28px 24px; font-size: 15px; line-height: 1.6; color: #333; border-bottom: 1px solid #f0f0f0; }
+  .th-body p { margin-bottom: 12px; }
+  .th-body p:last-child { margin-bottom: 0; }
+
+  /* Replies */
+  .replies-section { padding: 20px 28px; }
+  .replies-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .replies-title { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+  .replies-sort { font-size: 12px; color: #888; cursor: pointer; }
+  .replies-sort strong { color: #1a1a1a; }
+
+  .reply { display: flex; gap: 14px; padding: 16px 0; border-bottom: 1px solid #f5f5f5; }
+  .reply:last-child { border-bottom: none; }
+  .reply-av { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; }
+  .reply-av.a { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+  .reply-av.b { background: linear-gradient(135deg, #34d399, #10b981); }
+  .reply-av.c { background: linear-gradient(135deg, #c4b5fd, #8b5cf6); }
+  .reply-av.d { background: linear-gradient(135deg, #f87171, #ef4444); }
+  .reply-av.e { background: linear-gradient(135deg, #93c5fd, #3b82f6); }
+  .reply-av.f { background: linear-gradient(135deg, #fda4af, #ec4899); }
+  .reply-content { flex: 1; min-width: 0; }
+  .reply-author-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+  .reply-author { font-size: 13px; font-weight: 700; color: #1a1a1a; }
+  .reply-author-tag { font-size: 9px; background: #2563eb15; color: #2563eb; padding: 2px 6px; border-radius: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+  .reply-time { font-size: 11px; color: #888; }
+  .reply-text { font-size: 14px; color: #333; line-height: 1.55; margin-bottom: 10px; }
+  .reply-actions { display: flex; gap: 18px; font-size: 12px; color: #888; }
+  .reply-action { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+  .reply-action:hover { color: #2563eb; }
+  .reply-action.liked { color: #2563eb; font-weight: 600; }
+
+  /* Nested reply */
+  .reply-nested { margin-top: 12px; padding-left: 16px; border-left: 2px solid #f0f0f0; padding-top: 12px; }
+
+  /* Composer */
+  .composer { position: sticky; bottom: 0; background: #fff; border-top: 1px solid #e0e0e0; padding: 16px 28px; display: flex; gap: 14px; align-items: flex-start; }
+  .composer-av { width: 36px; height: 36px; border-radius: 50%; background: #d4d4d4; flex-shrink: 0; }
+  .composer-input { flex: 1; min-height: 60px; background: #f9fafb; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 14px; font-size: 14px; color: #333; font-family: inherit; resize: vertical; }
+  .composer-input::placeholder { color: #888; }
+  .composer-cta { background: #2563eb; color: #fff; border: none; border-radius: 8px; padding: 11px 22px; font-weight: 600; font-size: 13px; cursor: pointer; align-self: center; flex-shrink: 0; }
+  .composer-cta:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<!-- Wireframe banner -->
+<div class="wf-banner">
+  <div class="wf-label"><strong>Simply Wall St</strong> — Community Discussions Room (Question of the Week)</div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-logo">Simply Wall St</div>
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Portfolios</a>
+    <a href="#">Watchlist</a>
+    <a href="sws-community-wireframe.html" class="active">Community</a>
+    <a href="#">Discover</a>
+    <a href="#">Screener</a>
+  </div>
+  <input class="nav-search" placeholder="Search companies worldwide..." />
+</nav>
+
+<!-- Sub-nav -->
+<div class="sub-nav">
+  <a href="sws-community-wireframe.html">Narratives</a>
+  <a href="#">Watchlists</a>
+  <a href="sws-stocks-investors-watching.html">Stocks Investors Are Watching</a>
+  <a href="sws-rooms-wireframe.html" class="active">Popular Rooms</a>
+  <a href="sws-authors-wireframe.html">Authors</a>
+</div>
+
+<!-- Room header bar -->
+<div class="room-header-bar">
+  <div class="rh-icon">💬</div>
+  <div class="rh-info">
+    <a class="rh-back" href="sws-rooms-wireframe.html">← Back to Rooms</a>
+    <div class="rh-title-row">
+      <span class="rh-title">Community Discussions</span>
+      <span class="rh-tag">Community Room</span>
+    </div>
+    <div class="rh-meta">
+      <span class="rh-active"><span class="rh-dot"></span>Active now</span>
+      <span class="meta-divider">·</span>
+      <span>1,247 members online</span>
+      <span class="meta-divider">·</span>
+      <span>Q&amp;A across the community</span>
+    </div>
+  </div>
+  <button class="rh-cta">+ Join Room</button>
+</div>
+
+<!-- Two-pane body -->
+<div class="room-body">
+
+  <!-- Threads sidebar -->
+  <aside class="threads-sidebar">
+    <div class="ts-header">
+      <span class="ts-title">Threads</span>
+      <span class="ts-new">+ New thread</span>
+    </div>
+    <input class="ts-search" placeholder="Search threads..." />
+
+    <div class="ts-section-label">📌 Pinned</div>
+    <div class="thread-item pinned active">
+      <div class="thread-item-row1">
+        <span class="thread-pin">📌</span>
+      </div>
+      <div class="thread-item-title">What's the largest stock in your portfolio, and why do you hold it?</div>
+      <div class="thread-item-meta">
+        <span class="thread-active-dot"></span>
+        <span>142 responses</span>
+        <span>· active now</span>
+      </div>
+    </div>
+
+    <div class="ts-section-label">Active threads</div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">How do you size positions in early-stage biotechs?</div>
+      <div class="thread-item-meta">
+        <span class="thread-active-dot"></span>
+        <span>38 responses</span>
+        <span>· 2h ago</span>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">Best free screeners for international stocks?</div>
+      <div class="thread-item-meta">
+        <span>21 responses</span>
+        <span>· 4h ago</span>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">Anyone holding gold miners as an inflation hedge?</div>
+      <div class="thread-item-meta">
+        <span class="thread-active-dot"></span>
+        <span>56 responses</span>
+        <span>· 5h ago</span>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">Discussion: When is dollar-cost averaging actually optimal?</div>
+      <div class="thread-item-meta">
+        <span>14 responses</span>
+        <span>· 8h ago</span>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">What's your single biggest investing mistake?</div>
+      <div class="thread-item-meta">
+        <span>89 responses</span>
+        <span>· 1d ago</span>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">Tracking your portfolio: spreadsheet vs. apps?</div>
+      <div class="thread-item-meta">
+        <span>27 responses</span>
+        <span>· 1d ago</span>
+      </div>
+    </div>
+
+    <div class="thread-item">
+      <div class="thread-item-title">How long do you wait before selling an underperformer?</div>
+      <div class="thread-item-meta">
+        <span>33 responses</span>
+        <span>· 2d ago</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main pane: active thread -->
+  <main class="thread-main">
+
+    <div class="thread-header">
+      <div class="th-eyebrow">📌 Pinned · Question of the Week</div>
+      <h1 class="th-title">What's the largest stock in your portfolio, and why do you hold it?</h1>
+      <div class="th-author-row">
+        <div class="th-author-av">CM</div>
+        <div class="th-author-info">
+          <div class="th-author-name">Community Team</div>
+          <div class="th-author-meta">Posted 2 days ago · <span class="ends">Ends in 3 days</span></div>
+        </div>
+      </div>
+      <div class="th-stats">
+        <span><strong>142</strong> responses</span>
+        <span><strong>2.4k</strong> views</span>
+        <span><strong>89</strong> upvotes</span>
+      </div>
+    </div>
+
+    <!-- Original post body -->
+    <div class="th-body">
+      <p>Every Monday we ask the community a question to learn more about how each of you invests. This week:</p>
+      <p><strong>What's your largest single-stock position right now?</strong> Tell us:</p>
+      <p>1. The ticker and roughly what % of your portfolio it makes up<br>
+      2. Why it earned that conviction<br>
+      3. What would make you reduce or exit it</p>
+      <p>The most thoughtful answer wins a featured spot on the homepage next week. Don't be shy — there are no wrong answers, and conviction stories are how we all learn.</p>
+    </div>
+
+    <!-- Replies -->
+    <div class="replies-section">
+      <div class="replies-header">
+        <div class="replies-title">142 responses</div>
+        <div class="replies-sort">Sort by: <strong>Most upvoted ▾</strong></div>
+      </div>
+
+      <div class="reply">
+        <div class="reply-av a"></div>
+        <div class="reply-content">
+          <div class="reply-author-row">
+            <span class="reply-author">tripledub</span>
+            <span class="reply-author-tag">Top author</span>
+            <span class="reply-time">· 1 day ago</span>
+          </div>
+          <div class="reply-text">My biggest is <strong>ASML</strong> at ~14% of the portfolio. The monopoly on EUV lithography is a structural moat that doesn't get priced in during cyclical downturns — and that's exactly when I add. I'd only reduce if China sanctions started biting actual orders, not just headlines. Holding through earnings noise.</div>
+          <div class="reply-actions">
+            <span class="reply-action liked">▲ 47</span>
+            <span class="reply-action">💬 Reply</span>
+            <span class="reply-action">⤴ Share</span>
+          </div>
+          <!-- Nested reply -->
+          <div class="reply-nested">
+            <div class="reply">
+              <div class="reply-av c"></div>
+              <div class="reply-content">
+                <div class="reply-author-row">
+                  <span class="reply-author">SimpleMan887</span>
+                  <span class="reply-time">· 22h ago</span>
+                </div>
+                <div class="reply-text">Exactly this. The High-NA EUV ramp is going to look obvious in hindsight. Added on the last 15% pullback.</div>
+                <div class="reply-actions">
+                  <span class="reply-action">▲ 18</span>
+                  <span class="reply-action">💬 Reply</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply">
+        <div class="reply-av b"></div>
+        <div class="reply-content">
+          <div class="reply-author-row">
+            <span class="reply-author">Rotbio</span>
+            <span class="reply-time">· 1 day ago</span>
+          </div>
+          <div class="reply-text"><strong>NVDA</strong>, ~22% — yes I know it's a lot. The conviction came from realizing the AI capex cycle isn't a cycle yet, it's a build-out phase. I'd start trimming if hyperscaler capex actually plateaus, but every quarter so far has been "more, please." Setting trailing stops to manage downside.</div>
+          <div class="reply-actions">
+            <span class="reply-action">▲ 38</span>
+            <span class="reply-action">💬 Reply</span>
+            <span class="reply-action">⤴ Share</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply">
+        <div class="reply-av d"></div>
+        <div class="reply-content">
+          <div class="reply-author-row">
+            <span class="reply-author">stuart_roberts</span>
+            <span class="reply-author-tag">Recommended Voice</span>
+            <span class="reply-time">· 1 day ago</span>
+          </div>
+          <div class="reply-text"><strong>BHP</strong> at 11%. Cyclical commodity exposure with the best balance sheet in mining and a dividend that funds my higher-risk biotech bets. Would reduce if iron ore prices structurally rerated lower (Chinese property + steel demand collapse), but capex discipline across the majors makes me think floor pricing holds.</div>
+          <div class="reply-actions">
+            <span class="reply-action">▲ 31</span>
+            <span class="reply-action">💬 Reply</span>
+            <span class="reply-action">⤴ Share</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply">
+        <div class="reply-av e"></div>
+        <div class="reply-content">
+          <div class="reply-author-row">
+            <span class="reply-author">Aharon</span>
+            <span class="reply-time">· 18h ago</span>
+          </div>
+          <div class="reply-text"><strong>Berkshire B</strong>, ~18%. It's basically a managed portfolio with insurance float as leverage and no fee. The conviction is that I'd rather be wrong with Buffett than right with most active managers. Would only reduce on a meaningful change in capital allocation discipline post-succession.</div>
+          <div class="reply-actions">
+            <span class="reply-action">▲ 24</span>
+            <span class="reply-action">💬 Reply</span>
+            <span class="reply-action">⤴ Share</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply">
+        <div class="reply-av f"></div>
+        <div class="reply-content">
+          <div class="reply-author-row">
+            <span class="reply-author">yiannisz</span>
+            <span class="reply-time">· 12h ago</span>
+          </div>
+          <div class="reply-text"><strong>LVMH</strong>, 9%. Luxury is one of the few categories where pricing power compounds genuinely across decades. The recent Chinese demand wobble gave me my entry. I'd exit if Bernard Arnault meaningfully changed the brand portfolio strategy or if the family transition got messy.</div>
+          <div class="reply-actions">
+            <span class="reply-action">▲ 19</span>
+            <span class="reply-action">💬 Reply</span>
+            <span class="reply-action">⤴ Share</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="reply">
+        <div class="reply-av c"></div>
+        <div class="reply-content">
+          <div class="reply-author-row">
+            <span class="reply-author">BrandonRM4</span>
+            <span class="reply-time">· 6h ago</span>
+          </div>
+          <div class="reply-text"><strong>GOOGL</strong>, ~16%. Antitrust fears have given me three different entry points in two years. Ad business is unkillable, YouTube is undermonetized, and Waymo is a free option. I'd reduce only if Search ad revenue actually broke down, not just decelerated.</div>
+          <div class="reply-actions">
+            <span class="reply-action">▲ 12</span>
+            <span class="reply-action">💬 Reply</span>
+            <span class="reply-action">⤴ Share</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Composer -->
+    <div class="composer">
+      <div class="composer-av"></div>
+      <textarea class="composer-input" placeholder="Share your answer — what's your largest position and why?"></textarea>
+      <button class="composer-cta">Post answer</button>
+    </div>
+
+  </main>
+
+</div>
+
+</body>
+</html>

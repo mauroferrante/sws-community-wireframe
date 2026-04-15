@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simply Wall St — Top Community Authors</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f5f5; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+  /* Wireframe banner */
+  .wf-banner { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 32px; display: flex; align-items: center; justify-content: center; }
+  .wf-label { font-size: 12px; color: #888; }
+  .wf-label strong { color: #1a1a1a; }
+
+  /* Top Nav */
+  .nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 12px 32px; display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-weight: 700; font-size: 16px; color: #1a1a1a; }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a { color: #888; text-decoration: none; font-size: 13px; }
+  .nav-links a.active { color: #1a1a1a; font-weight: 600; border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
+  .nav-search { margin-left: auto; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; width: 240px; }
+
+  /* Sub-nav */
+  .sub-nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 32px; display: flex; align-items: center; gap: 24px; }
+  .sub-nav a { color: #888; text-decoration: none; font-size: 13px; padding: 12px 0; border-bottom: 2px solid transparent; }
+  .sub-nav a.active { color: #1a1a1a; font-weight: 600; border-bottom-color: #2563eb; }
+
+  /* Page */
+  .page { max-width: 1200px; margin: 0 auto; padding: 28px 32px 80px; }
+
+  /* Breadcrumb */
+  .breadcrumb { font-size: 12px; color: #888; margin-bottom: 16px; }
+  .breadcrumb a { color: #2563eb; text-decoration: none; }
+
+  /* Page header */
+  .page-header { margin-bottom: 28px; }
+  .page-title { font-size: 28px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .page-desc { font-size: 14px; color: #555; line-height: 1.5; max-width: 700px; }
+
+  /* Voice of the Week hero */
+  .votw-hero { background: linear-gradient(135deg, #f5f3ff 0%, #eff6ff 50%, #fef3c7 100%); border: 1px solid #c7d2fe; border-radius: 16px; padding: 32px 36px; margin-bottom: 36px; position: relative; overflow: hidden; }
+  .votw-hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%); border-radius: 50%; }
+  .votw-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: #92400e; font-weight: 700; background: #fef3c7; border: 1px solid #fcd34d; padding: 6px 12px; border-radius: 999px; margin-bottom: 18px; position: relative; }
+  .votw-body { display: flex; gap: 28px; align-items: flex-start; position: relative; }
+  .votw-avatar { width: 96px; height: 96px; border-radius: 50%; background: linear-gradient(135deg, #fbbf24, #f59e0b, #d97706); flex-shrink: 0; border: 4px solid #fff; box-shadow: 0 4px 16px rgba(245, 158, 11, 0.25); }
+  .votw-content { flex: 1; min-width: 0; }
+  .votw-name-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+  .votw-name { font-size: 26px; font-weight: 800; color: #1a1a1a; }
+  .votw-handle { font-size: 14px; color: #888; }
+  .votw-quote { font-size: 14px; color: #555; line-height: 1.55; font-style: italic; padding-left: 14px; border-left: 3px solid #fcd34d; margin: 14px 0 18px; }
+  .votw-quote-attr { font-size: 11px; color: #92400e; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-top: 6px; font-style: normal; }
+  .votw-stats { display: flex; gap: 28px; margin-bottom: 20px; }
+  .votw-stat { display: flex; flex-direction: column; gap: 2px; }
+  .votw-stat-value { font-size: 20px; font-weight: 800; color: #1a1a1a; line-height: 1; }
+  .votw-stat-label { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+  .votw-stat-value.accuracy { color: #16a34a; }
+  .votw-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .votw-cta-primary { background: #1a1a1a; color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-weight: 700; font-size: 13px; cursor: pointer; }
+  .votw-cta-primary:hover { background: #000; }
+  .votw-cta-secondary { background: #fff; color: #1a1a1a; border: 1px solid #e0e0e0; border-radius: 10px; padding: 12px 20px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .votw-cta-secondary:hover { border-color: #1a1a1a; }
+
+  /* Featured narrative inside VOTW */
+  .votw-narrative { display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; margin-top: 18px; cursor: pointer; transition: border-color 0.2s, box-shadow 0.2s; }
+  .votw-narrative:hover { border-color: #2563eb; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08); }
+  .votw-narrative-icon { width: 38px; height: 38px; border-radius: 8px; background: #f5f5f5; border: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #888; flex-shrink: 0; }
+  .votw-narrative-info { flex: 1; min-width: 0; }
+  .votw-narrative-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: #2563eb; font-weight: 700; margin-bottom: 2px; }
+  .votw-narrative-title { font-size: 14px; font-weight: 600; color: #1a1a1a; line-height: 1.35; }
+  .votw-narrative-meta { font-size: 11px; color: #888; margin-top: 3px; }
+  .votw-narrative-arrow { color: #2563eb; font-size: 18px; flex-shrink: 0; }
+
+  /* Filters */
+  .filters-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+  .filter-pill { background: #fff; border: 1px solid #e0e0e0; border-radius: 999px; padding: 8px 16px; font-size: 12px; color: #555; font-weight: 600; cursor: pointer; }
+  .filter-pill:hover { border-color: #2563eb; color: #2563eb; }
+  .filter-pill.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .filter-period { display: flex; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin-left: auto; }
+  .filter-period-btn { padding: 8px 14px; font-size: 12px; color: #888; cursor: pointer; border: none; background: none; font-weight: 600; }
+  .filter-period-btn.active { background: #2563eb; color: #fff; }
+
+  /* Authors table */
+  .authors-table { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
+  .authors-table-header { display: grid; grid-template-columns: 50px 1fr 100px 100px 110px 100px 110px; gap: 16px; padding: 14px 24px; background: #fafafa; border-bottom: 1px solid #e0e0e0; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; align-items: center; }
+  .author-row { display: grid; grid-template-columns: 50px 1fr 100px 100px 110px 100px 110px; gap: 16px; padding: 16px 24px; border-bottom: 1px solid #f5f5f5; align-items: center; cursor: pointer; transition: background 0.15s; }
+  .author-row:hover { background: #f9fafb; }
+  .author-row:last-child { border-bottom: none; }
+  .author-rank { font-size: 16px; font-weight: 700; color: #888; }
+  .author-rank.top3 { color: #2563eb; }
+  .author-cell { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .author-av { width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; }
+  .author-av.a { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+  .author-av.b { background: linear-gradient(135deg, #34d399, #10b981); }
+  .author-av.c { background: linear-gradient(135deg, #c4b5fd, #8b5cf6); }
+  .author-av.d { background: linear-gradient(135deg, #f87171, #ef4444); }
+  .author-av.e { background: linear-gradient(135deg, #93c5fd, #3b82f6); }
+  .author-av.f { background: linear-gradient(135deg, #fda4af, #ec4899); }
+  .author-av.g { background: linear-gradient(135deg, #fcd34d, #f59e0b); }
+  .author-av.h { background: linear-gradient(135deg, #6ee7b7, #10b981); }
+  .author-av.i { background: linear-gradient(135deg, #a5b4fc, #6366f1); }
+  .author-av.j { background: linear-gradient(135deg, #fb7185, #e11d48); }
+  .author-info { min-width: 0; }
+  .author-name { font-size: 14px; font-weight: 700; color: #1a1a1a; }
+  .author-tagline { font-size: 12px; color: #888; }
+  .author-stat { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .author-stat-sub { font-size: 11px; color: #888; }
+  .author-stat.accuracy { color: #16a34a; }
+  .follow-btn { background: #fff; color: #1a1a1a; border: 1px solid #e0e0e0; border-radius: 8px; padding: 7px 16px; font-weight: 600; font-size: 12px; cursor: pointer; transition: all 0.15s; }
+  .follow-btn:hover { border-color: #2563eb; color: #2563eb; }
+  .follow-btn.following { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .recommended-pill { display: inline-flex; align-items: center; gap: 4px; font-size: 9px; background: #fef3c7; color: #92400e; padding: 2px 7px; border-radius: 5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; border: 1px solid #fcd34d; margin-left: 8px; }
+
+</style>
+</head>
+<body>
+
+<!-- Wireframe banner -->
+<div class="wf-banner">
+  <div class="wf-label"><strong>Simply Wall St</strong> — Top Community Authors</div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-logo">Simply Wall St</div>
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Portfolios</a>
+    <a href="#">Watchlist</a>
+    <a href="sws-community-wireframe.html" class="active">Community</a>
+    <a href="#">Discover</a>
+    <a href="#">Screener</a>
+  </div>
+  <input class="nav-search" placeholder="Search companies worldwide..." />
+</nav>
+
+<!-- Sub-nav -->
+<div class="sub-nav">
+  <a href="sws-community-wireframe.html">Narratives</a>
+  <a href="#">Watchlists</a>
+  <a href="sws-stocks-investors-watching.html">Stocks Investors Are Watching</a>
+  <a href="sws-rooms-wireframe.html">Popular Rooms</a>
+  <a href="sws-authors-wireframe.html" class="active">Authors</a>
+</div>
+
+<div class="page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="sws-community-wireframe.html">Community</a> / Top Authors
+  </div>
+
+  <!-- Page header -->
+  <div class="page-header">
+    <h1 class="page-title">Top Community Authors</h1>
+    <p class="page-desc">Discover the most-read voices in the community. Follow your favourites to get their latest narratives delivered straight to your feed.</p>
+  </div>
+
+  <!-- Voice of the Week hero -->
+  <div class="votw-hero">
+    <div class="votw-eyebrow">⭐ Voice of the Week · Picked by the Community Team</div>
+    <div class="votw-body">
+      <div class="votw-avatar"></div>
+      <div class="votw-content">
+        <div class="votw-name-row">
+          <span class="votw-name">stuart_roberts</span>
+          <span class="votw-handle">@stuart_roberts</span>
+        </div>
+        <div class="votw-stats">
+          <div class="votw-stat">
+            <div class="votw-stat-value">42</div>
+            <div class="votw-stat-label">Narratives</div>
+          </div>
+          <div class="votw-stat">
+            <div class="votw-stat-value">28.5k</div>
+            <div class="votw-stat-label">Followers</div>
+          </div>
+          <div class="votw-stat">
+            <div class="votw-stat-value">312</div>
+            <div class="votw-stat-label">FV Adoptions</div>
+          </div>
+          <div class="votw-stat">
+            <div class="votw-stat-value accuracy">↑ 71%</div>
+            <div class="votw-stat-label">FV Accuracy</div>
+          </div>
+        </div>
+        <div class="votw-quote">
+          "Stuart's narratives consistently combine deep sector knowledge with a clear-eyed view of valuation. This week he published a standout thesis on Gain Therapeutics — surfacing a small-cap biotech most of the community had overlooked. Every Monday we pick one author who's earned the spotlight, and Stuart's the one this week."
+          <div class="votw-quote-attr">— The Community Team</div>
+        </div>
+        <div class="votw-actions">
+          <button class="votw-cta-primary">+ Follow stuart_roberts</button>
+          <button class="votw-cta-secondary">View profile →</button>
+        </div>
+
+        <!-- Featured narrative -->
+        <div class="votw-narrative" onclick="window.location='sws-narrative-wireframe.html'">
+          <div class="votw-narrative-icon">GANX</div>
+          <div class="votw-narrative-info">
+            <div class="votw-narrative-label">This week's featured narrative</div>
+            <div class="votw-narrative-title">Gain Therapeutics: The Under-the-Radar Biotech With Big Parkinson's Potential</div>
+            <div class="votw-narrative-meta">12.6k views · 89 FV adoptions · 6 min read</div>
+          </div>
+          <div class="votw-narrative-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <div class="filter-pill active">All authors</div>
+    <div class="filter-pill">Recommended Voices</div>
+    <div class="filter-pill">Following</div>
+    <div class="filter-pill">Most followed</div>
+    <div class="filter-period">
+      <button class="filter-period-btn">7D</button>
+      <button class="filter-period-btn active">30D</button>
+      <button class="filter-period-btn">All time</button>
+    </div>
+  </div>
+
+  <!-- Authors table -->
+  <div class="authors-table">
+    <div class="authors-table-header">
+      <div>#</div>
+      <div>Author</div>
+      <div>Views</div>
+      <div>Narratives</div>
+      <div>FV Adoptions</div>
+      <div>Followers</div>
+      <div></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank top3">1</div>
+      <div class="author-cell">
+        <div class="author-av a"></div>
+        <div class="author-info">
+          <div class="author-name">BlackGoat <span class="recommended-pill">⭐ Past Voice</span></div>
+          <div class="author-tagline">Macro &amp; commodities · Australia</div>
+        </div>
+      </div>
+      <div class="author-stat">85.6k</div>
+      <div class="author-stat">11</div>
+      <div class="author-stat">1.2k</div>
+      <div class="author-stat">22</div>
+      <div><button class="follow-btn following">Following</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank top3">2</div>
+      <div class="author-cell">
+        <div class="author-av b"></div>
+        <div class="author-info">
+          <div class="author-name">Investingelly</div>
+          <div class="author-tagline">Tech &amp; semis</div>
+        </div>
+      </div>
+      <div class="author-stat">62.4k</div>
+      <div class="author-stat">12</div>
+      <div class="author-stat">937</div>
+      <div class="author-stat">6</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank top3">3</div>
+      <div class="author-cell">
+        <div class="author-av c"></div>
+        <div class="author-info">
+          <div class="author-name">RockaTeller</div>
+          <div class="author-tagline">Long-term value · US</div>
+        </div>
+      </div>
+      <div class="author-stat">58.3k</div>
+      <div class="author-stat">79</div>
+      <div class="author-stat">816</div>
+      <div class="author-stat">9</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">4</div>
+      <div class="author-cell">
+        <div class="author-av d"></div>
+        <div class="author-info">
+          <div class="author-name">Agricola</div>
+          <div class="author-tagline">Materials &amp; resources</div>
+        </div>
+      </div>
+      <div class="author-stat">52k</div>
+      <div class="author-stat">28</div>
+      <div class="author-stat">444</div>
+      <div class="author-stat">12</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">5</div>
+      <div class="author-cell">
+        <div class="author-av e"></div>
+        <div class="author-info">
+          <div class="author-name">davidsander</div>
+          <div class="author-tagline">Fintech &amp; banks</div>
+        </div>
+      </div>
+      <div class="author-stat">51.6k</div>
+      <div class="author-stat">10</div>
+      <div class="author-stat">641</div>
+      <div class="author-stat">8</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">6</div>
+      <div class="author-cell">
+        <div class="author-av f"></div>
+        <div class="author-info">
+          <div class="author-name">yiannisz</div>
+          <div class="author-tagline">European luxury &amp; consumer</div>
+        </div>
+      </div>
+      <div class="author-stat">45.4k</div>
+      <div class="author-stat">70</div>
+      <div class="author-stat">847</div>
+      <div class="author-stat">9</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">7</div>
+      <div class="author-cell">
+        <div class="author-av g"></div>
+        <div class="author-info">
+          <div class="author-name">Robbo</div>
+          <div class="author-tagline">Energy transition</div>
+        </div>
+      </div>
+      <div class="author-stat">35.5k</div>
+      <div class="author-stat">29</div>
+      <div class="author-stat">399</div>
+      <div class="author-stat">7</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">8</div>
+      <div class="author-cell">
+        <div class="author-av h"></div>
+        <div class="author-info">
+          <div class="author-name">DSquare</div>
+          <div class="author-tagline">Small-cap deep value</div>
+        </div>
+      </div>
+      <div class="author-stat">35k</div>
+      <div class="author-stat">16</div>
+      <div class="author-stat">603</div>
+      <div class="author-stat">2</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">9</div>
+      <div class="author-cell">
+        <div class="author-av i"></div>
+        <div class="author-info">
+          <div class="author-name">Tokyo</div>
+          <div class="author-tagline">Japan &amp; Asia equities</div>
+        </div>
+      </div>
+      <div class="author-stat">29.3k</div>
+      <div class="author-stat">16</div>
+      <div class="author-stat">401</div>
+      <div class="author-stat">3</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">10</div>
+      <div class="author-cell">
+        <div class="author-av j"></div>
+        <div class="author-info">
+          <div class="author-name">WallStreetWontons <span class="recommended-pill">⭐ Past Voice</span></div>
+          <div class="author-tagline">Cross-asset macro</div>
+        </div>
+      </div>
+      <div class="author-stat">27.7k</div>
+      <div class="author-stat">24</div>
+      <div class="author-stat">337</div>
+      <div class="author-stat">3</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">11</div>
+      <div class="author-cell">
+        <div class="author-av a"></div>
+        <div class="author-info">
+          <div class="author-name">Linke</div>
+          <div class="author-tagline">Healthcare &amp; biotech</div>
+        </div>
+      </div>
+      <div class="author-stat">26.4k</div>
+      <div class="author-stat">19</div>
+      <div class="author-stat">498</div>
+      <div class="author-stat">1</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">12</div>
+      <div class="author-cell">
+        <div class="author-av b"></div>
+        <div class="author-info">
+          <div class="author-name">oscargarcia</div>
+          <div class="author-tagline">LATAM equities</div>
+        </div>
+      </div>
+      <div class="author-stat">25.2k</div>
+      <div class="author-stat">7</div>
+      <div class="author-stat">608</div>
+      <div class="author-stat">1</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">13</div>
+      <div class="author-cell">
+        <div class="author-av c"></div>
+        <div class="author-info">
+          <div class="author-name">WealthAP</div>
+          <div class="author-tagline">Quality compounders</div>
+        </div>
+      </div>
+      <div class="author-stat">23.8k</div>
+      <div class="author-stat">6</div>
+      <div class="author-stat">293</div>
+      <div class="author-stat">2</div>
+      <div><button class="follow-btn following">Following</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">14</div>
+      <div class="author-cell">
+        <div class="author-av d"></div>
+        <div class="author-info">
+          <div class="author-name">tripledub <span class="recommended-pill">⭐ Past Voice</span></div>
+          <div class="author-tagline">Semiconductor cycles</div>
+        </div>
+      </div>
+      <div class="author-stat">21.8k</div>
+      <div class="author-stat">10</div>
+      <div class="author-stat">142</div>
+      <div class="author-stat">54</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">15</div>
+      <div class="author-cell">
+        <div class="author-av e"></div>
+        <div class="author-info">
+          <div class="author-name">Goran_Danchevski</div>
+          <div class="author-tagline">European small caps</div>
+        </div>
+      </div>
+      <div class="author-stat">21.5k</div>
+      <div class="author-stat">25</div>
+      <div class="author-stat">474</div>
+      <div class="author-stat">2</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">16</div>
+      <div class="author-cell">
+        <div class="author-av f"></div>
+        <div class="author-info">
+          <div class="author-name">Double_Bubbler</div>
+          <div class="author-tagline">Contrarian plays</div>
+        </div>
+      </div>
+      <div class="author-stat">21.3k</div>
+      <div class="author-stat">9</div>
+      <div class="author-stat">175</div>
+      <div class="author-stat">0</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">17</div>
+      <div class="author-cell">
+        <div class="author-av g"></div>
+        <div class="author-info">
+          <div class="author-name">Joli_Communications</div>
+          <div class="author-tagline">Telecom &amp; media</div>
+        </div>
+      </div>
+      <div class="author-stat">21.2k</div>
+      <div class="author-stat">9</div>
+      <div class="author-stat">539</div>
+      <div class="author-stat">2</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">18</div>
+      <div class="author-cell">
+        <div class="author-av h"></div>
+        <div class="author-info">
+          <div class="author-name">ZioFa</div>
+          <div class="author-tagline">Italian &amp; EU equities</div>
+        </div>
+      </div>
+      <div class="author-stat">20.5k</div>
+      <div class="author-stat">5</div>
+      <div class="author-stat">182</div>
+      <div class="author-stat">1</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">19</div>
+      <div class="author-cell">
+        <div class="author-av i"></div>
+        <div class="author-info">
+          <div class="author-name">MichaelF</div>
+          <div class="author-tagline">REITs &amp; income</div>
+        </div>
+      </div>
+      <div class="author-stat">18.8k</div>
+      <div class="author-stat">14</div>
+      <div class="author-stat">462</div>
+      <div class="author-stat">5</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+    <div class="author-row">
+      <div class="author-rank">20</div>
+      <div class="author-cell">
+        <div class="author-av j"></div>
+        <div class="author-info">
+          <div class="author-name">stuart_roberts <span class="recommended-pill">⭐ Voice of the Week</span></div>
+          <div class="author-tagline">Healthcare &amp; biotech · ANZ</div>
+        </div>
+      </div>
+      <div class="author-stat">18.5k</div>
+      <div class="author-stat">42</div>
+      <div class="author-stat">312</div>
+      <div class="author-stat">28.5k</div>
+      <div><button class="follow-btn">+ Follow</button></div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>

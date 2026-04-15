@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simply Wall St — Stocks Investors Are Watching</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f5f5; color: #1a1a1a; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+  /* Top Nav */
+  .nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 12px 32px; display: flex; align-items: center; gap: 24px; position: sticky; top: 0; z-index: 100; }
+  .nav-logo { font-weight: 700; font-size: 16px; color: #1a1a1a; }
+  .nav-links { display: flex; gap: 20px; }
+  .nav-links a { color: #888; text-decoration: none; font-size: 13px; }
+  .nav-links a.active { color: #1a1a1a; font-weight: 600; border-bottom: 2px solid #2563eb; padding-bottom: 2px; }
+  .nav-search { margin-left: auto; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 14px; color: #888; font-size: 13px; width: 240px; }
+
+  /* Sub-nav tabs */
+  .sub-nav { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 0 32px; display: flex; align-items: center; gap: 24px; }
+  .sub-nav a { color: #888; text-decoration: none; font-size: 13px; padding: 12px 0; border-bottom: 2px solid transparent; }
+  .sub-nav a.active { color: #1a1a1a; font-weight: 600; border-bottom-color: #2563eb; }
+  .sub-nav-right { margin-left: auto; font-size: 13px; color: #888; }
+  .sub-nav-right a { color: #2563eb; text-decoration: none; }
+
+  /* Page */
+  .page { max-width: 1200px; margin: 0 auto; padding: 28px 32px; }
+
+  /* Breadcrumb */
+  .breadcrumb { font-size: 12px; color: #888; margin-bottom: 16px; }
+  .breadcrumb a { color: #2563eb; text-decoration: none; }
+
+  /* Page Header */
+  .page-header { margin-bottom: 24px; }
+  .page-title { font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+  .page-updated { font-size: 12px; color: #888; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .page-desc { font-size: 14px; color: #555; line-height: 1.5; }
+
+  /* Filters row */
+  .filters-row { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; width: 100%; }
+  .filter-pill { background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 7px 14px; font-size: 13px; color: #1a1a1a; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .filter-pill svg { width: 12px; height: 12px; color: #888; }
+  .filter-pill.active { border-color: #2563eb; background: #2563eb08; }
+
+  /* Time period toggle */
+  .period-toggle { display: flex; background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; margin-left: auto; }
+  .period-btn { padding: 7px 16px; font-size: 12px; color: #888; cursor: pointer; border: none; background: none; font-weight: 500; }
+  .period-btn.active { background: #2563eb; color: #fff; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .stats-left { display: flex; align-items: center; gap: 8px; }
+  .sort-select { background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 12px; font-size: 13px; color: #1a1a1a; cursor: pointer; }
+  .stats-count { font-size: 13px; color: #888; }
+  .view-toggle { display: flex; gap: 4px; }
+  .view-btn { width: 32px; height: 32px; border: 1px solid #e0e0e0; border-radius: 6px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+  .view-btn.active { border-color: #2563eb; background: #2563eb08; }
+  .view-btn svg { width: 16px; height: 16px; color: #888; }
+  .view-btn.active svg { color: #2563eb; }
+
+  /* Table */
+  .stock-table { width: 100%; background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; border-spacing: 0; table-layout: auto; }
+  .stock-table th { text-align: left; font-size: 12px; font-weight: 600; color: #888; padding: 14px 16px; border-bottom: 1px solid #e0e0e0; background: #fafafa; white-space: nowrap; }
+  .stock-table th.sortable { cursor: pointer; }
+  .stock-table th.sortable:hover { color: #1a1a1a; }
+  .stock-table th.sorted { color: #2563eb; }
+  .stock-table td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: 13px; white-space: nowrap; }
+  .stock-table tr:last-child td { border-bottom: none; }
+  .stock-table tr:hover td { background: #fafbff; }
+
+  /* Company cell */
+  .company-cell { display: flex; align-items: center; gap: 12px; }
+  .company-logo { width: 32px; height: 32px; border-radius: 8px; background: #f5f5f5; border: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #888; flex-shrink: 0; }
+  .company-name { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .company-ticker { font-size: 12px; color: #888; }
+
+  /* Watchlist adds (key metric) */
+  .watchlist-adds { display: flex; align-items: center; gap: 6px; }
+  .adds-bar-bg { width: 60px; height: 6px; background: #f0f0f0; border-radius: 3px; overflow: hidden; }
+  .adds-bar { height: 100%; background: #2563eb; border-radius: 3px; }
+  .adds-num { font-size: 14px; font-weight: 700; color: #2563eb; }
+
+  /* Trend */
+  .trend-up { color: #16a34a; font-weight: 600; }
+  .trend-down { color: #dc2626; font-weight: 600; }
+  .trend-new { color: #2563eb; font-weight: 600; font-size: 11px; background: #2563eb10; padding: 2px 8px; border-radius: 4px; }
+
+  /* Views */
+  .views-count { font-size: 13px; color: #555; }
+
+  /* Return colors */
+  .return-pos { color: #16a34a; font-weight: 500; }
+  .return-neg { color: #dc2626; font-weight: 500; }
+
+  /* Valuation tag */
+  .val-tag { font-size: 11px; padding: 3px 10px; border-radius: 10px; font-weight: 600; display: inline-block; }
+  .val-tag.under { background: #f0fdf4; color: #16a34a; }
+  .val-tag.over { background: #fef2f2; color: #dc2626; }
+  .val-tag.fair { background: #f5f5f5; color: #888; }
+
+  /* Star */
+  .star-btn { background: none; border: none; cursor: pointer; font-size: 18px; color: #d4d4d4; }
+  .star-btn.active { color: #2563eb; }
+
+  /* Rank column */
+  .rank { font-size: 14px; font-weight: 700; color: #bbb; width: 32px; text-align: center; }
+  .rank.top3 { color: #2563eb; }
+
+  /* Pagination */
+  .pagination { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 24px; }
+  .page-btn { width: 36px; height: 36px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #555; cursor: pointer; }
+  .page-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+  .page-btn:hover:not(.active) { border-color: #2563eb; }
+  .page-dots { font-size: 13px; color: #888; }
+
+  /* Insight banner */
+  .insight-banner { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 20px 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 20px; width: 100%; }
+  .insight-icon { width: 44px; height: 44px; border-radius: 10px; background: #2563eb0a; border: 1px solid #2563eb20; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .insight-icon svg { width: 22px; height: 22px; color: #2563eb; }
+  .insight-content { flex: 1; }
+  .insight-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 2px; }
+  .insight-desc { font-size: 13px; color: #888; }
+  .insight-stats { display: flex; gap: 32px; flex-shrink: 0; }
+  .insight-stat { text-align: center; }
+  .insight-stat-num { font-size: 22px; font-weight: 700; color: #2563eb; }
+  .insight-stat-label { font-size: 11px; color: #888; }
+
+  /* Wireframe label bar */
+  .wf-banner { background: #fff; border-bottom: 1px solid #e0e0e0; padding: 10px 32px; display: flex; align-items: center; justify-content: center; }
+  .wf-label { font-size: 12px; color: #888; }
+  .wf-label strong { color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<!-- Wireframe Banner -->
+<div class="wf-banner">
+  <div class="wf-label"><strong>Simply Wall St</strong> — Stocks Investors Are Watching (View All Page)</div>
+</div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-logo">Simply Wall St</div>
+  <div class="nav-links">
+    <a href="#">Dashboard</a>
+    <a href="#">Portfolios</a>
+    <a href="#">Watchlist</a>
+    <a href="sws-community-wireframe.html" class="active">Community</a>
+    <a href="#">Discover</a>
+    <a href="#">Screener</a>
+  </div>
+  <input class="nav-search" placeholder="Search companies worldwide..." />
+</nav>
+
+<!-- Sub-nav -->
+<div class="sub-nav">
+  <a href="sws-community-wireframe.html">Narratives</a>
+  <a href="#">Watchlists</a>
+  <a href="#" class="active">Stocks Investors Are Watching</a>
+  <a href="#">Popular Rooms</a>
+  <a href="sws-authors-wireframe.html">Authors</a>
+</div>
+
+<div class="page">
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a href="sws-community-wireframe.html">Community</a> / Stocks Investors Are Watching
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="page-title">Stocks Investors Are Watching</div>
+    <div class="page-updated">Updated Apr 15, 2026</div>
+    <div class="page-desc">Discover which stocks the Simply Wall St community is paying attention to. Ranked by the number of investors who added each stock to their watchlist. Updated weekly.</div>
+  </div>
+
+  <!-- Insight Banner -->
+  <div class="insight-banner">
+    <div class="insight-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div class="insight-content">
+      <div class="insight-title">This week's community activity</div>
+      <div class="insight-desc">Watchlist activity across the Simply Wall St community for the week of Apr 8 – Apr 15, 2026.</div>
+    </div>
+    <div class="insight-stats">
+      <div class="insight-stat">
+        <div class="insight-stat-num">2,847</div>
+        <div class="insight-stat-label">Stocks watchlisted</div>
+      </div>
+      <div class="insight-stat">
+        <div class="insight-stat-num">18.4k</div>
+        <div class="insight-stat-label">Total additions</div>
+      </div>
+      <div class="insight-stat">
+        <div class="insight-stat-num">+12%</div>
+        <div class="insight-stat-label">vs. last week</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-row">
+    <div class="filter-pill active">
+      All Markets
+      <svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 5l3 3 3-3H3z"/></svg>
+    </div>
+    <div class="filter-pill">
+      All Industries
+      <svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 5l3 3 3-3H3z"/></svg>
+    </div>
+    <div class="filter-pill">
+      All Market Caps
+      <svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 5l3 3 3-3H3z"/></svg>
+    </div>
+    <div class="period-toggle">
+      <div class="period-btn active">7 Days</div>
+      <div class="period-btn">30 Days</div>
+      <div class="period-btn">All Time</div>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stats-left">
+      <select class="sort-select">
+        <option>Most Watchlisted</option>
+        <option>Biggest Movers (vs. last week)</option>
+        <option>Newly Trending</option>
+      </select>
+      <span class="stats-count">2,847 stocks</span>
+    </div>
+    <div class="view-toggle">
+      <div class="view-btn active">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="14" height="3" rx="1"/><rect x="1" y="6" width="14" height="3" rx="1"/><rect x="1" y="11" width="14" height="3" rx="1"/></svg>
+      </div>
+      <div class="view-btn">
+        <svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <table class="stock-table">
+    <thead>
+      <tr>
+        <th style="width:40px">#</th>
+        <th>Company</th>
+        <th class="sortable sorted">Watchlisted &#9660;</th>
+        <th class="sortable">Trend</th>
+        <th class="sortable">Views</th>
+        <th class="sortable">7D Return</th>
+        <th class="sortable">1Y Return</th>
+        <th class="sortable">Market Cap</th>
+        <th>Industry</th>
+        <th style="width:40px"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="rank top3">1</span></td>
+        <td><div class="company-cell"><div class="company-logo">NVDA</div><div><div class="company-name">NVIDIA</div><div class="company-ticker">NASDAQ: NVDA</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">156</span><div class="adds-bar-bg"><div class="adds-bar" style="width:100%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 18%</span></td>
+        <td><span class="views-count">45.2k</span></td>
+        <td><span class="return-pos">+10.3%</span></td>
+        <td><span class="return-pos">+75.1%</span></td>
+        <td>US$4.6t</td>
+        <td>Semiconductors</td>
+        <td><button class="star-btn active">&#9733;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank top3">2</span></td>
+        <td><div class="company-cell"><div class="company-logo">TSLA</div><div><div class="company-name">Tesla</div><div class="company-ticker">NASDAQ: TSLA</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">92</span><div class="adds-bar-bg"><div class="adds-bar" style="width:59%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 58%</span></td>
+        <td><span class="views-count">38.7k</span></td>
+        <td><span class="return-pos">+5.1%</span></td>
+        <td><span class="return-pos">+43.3%</span></td>
+        <td>US$1.3t</td>
+        <td>Automobiles</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank top3">3</span></td>
+        <td><div class="company-cell"><div class="company-logo">LLY</div><div><div class="company-name">Eli Lilly</div><div class="company-ticker">NYSE: LLY</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">78</span><div class="adds-bar-bg"><div class="adds-bar" style="width:50%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 34%</span></td>
+        <td><span class="views-count">22.1k</span></td>
+        <td><span class="return-neg">-0.9%</span></td>
+        <td><span class="return-pos">+21.8%</span></td>
+        <td>US$831.8b</td>
+        <td>Pharmaceuticals</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">4</span></td>
+        <td><div class="company-cell"><div class="company-logo">PLTR</div><div><div class="company-name">Palantir</div><div class="company-ticker">NASDAQ: PLTR</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">64</span><div class="adds-bar-bg"><div class="adds-bar" style="width:41%"></div></div></div></td>
+        <td><span class="trend-new">New in top 10</span></td>
+        <td><span class="views-count">19.8k</span></td>
+        <td><span class="return-neg">-9.6%</span></td>
+        <td><span class="return-pos">+37.9%</span></td>
+        <td>US$316.6b</td>
+        <td>Software</td>
+        <td><button class="star-btn active">&#9733;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">5</span></td>
+        <td><div class="company-cell"><div class="company-logo">AAPL</div><div><div class="company-name">Apple</div><div class="company-ticker">NASDAQ: AAPL</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">58</span><div class="adds-bar-bg"><div class="adds-bar" style="width:37%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 12%</span></td>
+        <td><span class="views-count">31.4k</span></td>
+        <td><span class="return-pos">+2.1%</span></td>
+        <td><span class="return-pos">+28.0%</span></td>
+        <td>US$3.8t</td>
+        <td>Tech</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">6</span></td>
+        <td><div class="company-cell"><div class="company-logo">ASML</div><div><div class="company-name">ASML</div><div class="company-ticker">AMS: ASML</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">41</span><div class="adds-bar-bg"><div class="adds-bar" style="width:26%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 22%</span></td>
+        <td><span class="views-count">8.9k</span></td>
+        <td><span class="return-pos">+6.8%</span></td>
+        <td><span class="return-pos">+15.2%</span></td>
+        <td>US$306.1b</td>
+        <td>Semiconductors</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">7</span></td>
+        <td><div class="company-cell"><div class="company-logo">AMZN</div><div><div class="company-name">Amazon</div><div class="company-ticker">NASDAQ: AMZN</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">39</span><div class="adds-bar-bg"><div class="adds-bar" style="width:25%"></div></div></div></td>
+        <td><span class="trend-down">&#8595; 8%</span></td>
+        <td><span class="views-count">27.3k</span></td>
+        <td><span class="return-pos">+16.5%</span></td>
+        <td><span class="return-pos">+38.6%</span></td>
+        <td>US$2.6t</td>
+        <td>Retail</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">8</span></td>
+        <td><div class="company-cell"><div class="company-logo">MU</div><div><div class="company-name">Micron Technology</div><div class="company-ticker">NASDAQ: MU</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">37</span><div class="adds-bar-bg"><div class="adds-bar" style="width:24%"></div></div></div></td>
+        <td><span class="trend-new">New in top 10</span></td>
+        <td><span class="views-count">14.2k</span></td>
+        <td><span class="return-pos">+23.3%</span></td>
+        <td><span class="return-pos">+555.5%</span></td>
+        <td>US$481.0b</td>
+        <td>Semiconductors</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">9</span></td>
+        <td><div class="company-cell"><div class="company-logo">MSFT</div><div><div class="company-name">Microsoft</div><div class="company-ticker">NASDAQ: MSFT</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">35</span><div class="adds-bar-bg"><div class="adds-bar" style="width:22%"></div></div></div></td>
+        <td><span class="trend-down">&#8595; 5%</span></td>
+        <td><span class="views-count">25.6k</span></td>
+        <td><span class="return-pos">+5.6%</span></td>
+        <td><span class="return-pos">+1.9%</span></td>
+        <td>US$2.9t</td>
+        <td>Software</td>
+        <td><button class="star-btn active">&#9733;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">10</span></td>
+        <td><div class="company-cell"><div class="company-logo">AMD</div><div><div class="company-name">Advanced Micro Devices</div><div class="company-ticker">NASDAQ: AMD</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">33</span><div class="adds-bar-bg"><div class="adds-bar" style="width:21%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 45%</span></td>
+        <td><span class="views-count">18.1k</span></td>
+        <td><span class="return-pos">+15.1%</span></td>
+        <td><span class="return-pos">+167.6%</span></td>
+        <td>US$402.4b</td>
+        <td>Semiconductors</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">11</span></td>
+        <td><div class="company-cell"><div class="company-logo">GOOGL</div><div><div class="company-name">Alphabet</div><div class="company-ticker">NASDAQ: GOOGL</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">31</span><div class="adds-bar-bg"><div class="adds-bar" style="width:20%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 9%</span></td>
+        <td><span class="views-count">29.8k</span></td>
+        <td><span class="return-pos">+9.0%</span></td>
+        <td><span class="return-pos">+113.0%</span></td>
+        <td>US$3.9t</td>
+        <td>Media</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">12</span></td>
+        <td><div class="company-cell"><div class="company-logo">AVGO</div><div><div class="company-name">Broadcom</div><div class="company-ticker">NASDAQ: AVGO</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">29</span><div class="adds-bar-bg"><div class="adds-bar" style="width:19%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 31%</span></td>
+        <td><span class="views-count">12.4k</span></td>
+        <td><span class="return-pos">+14.0%</span></td>
+        <td><span class="return-pos">+112.8%</span></td>
+        <td>US$1.8t</td>
+        <td>Semiconductors</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">13</span></td>
+        <td><div class="company-cell"><div class="company-logo">META</div><div><div class="company-name">Meta Platforms</div><div class="company-ticker">NASDAQ: META</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">27</span><div class="adds-bar-bg"><div class="adds-bar" style="width:17%"></div></div></div></td>
+        <td><span class="trend-down">&#8595; 12%</span></td>
+        <td><span class="views-count">21.9k</span></td>
+        <td><span class="return-pos">+15.2%</span></td>
+        <td><span class="return-pos">+27.0%</span></td>
+        <td>US$1.6t</td>
+        <td>Media</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">14</span></td>
+        <td><div class="company-cell"><div class="company-logo">JPM</div><div><div class="company-name">JPMorgan Chase</div><div class="company-ticker">NYSE: JPM</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">24</span><div class="adds-bar-bg"><div class="adds-bar" style="width:15%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 7%</span></td>
+        <td><span class="views-count">15.3k</span></td>
+        <td><span class="return-pos">+4.6%</span></td>
+        <td><span class="return-pos">+33.5%</span></td>
+        <td>US$841.4b</td>
+        <td>Banks</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+      <tr>
+        <td><span class="rank">15</span></td>
+        <td><div class="company-cell"><div class="company-logo">INTC</div><div><div class="company-name">Intel</div><div class="company-ticker">NASDAQ: INTC</div></div></div></td>
+        <td><div class="watchlist-adds"><span class="adds-num">22</span><div class="adds-bar-bg"><div class="adds-bar" style="width:14%"></div></div></div></td>
+        <td><span class="trend-up">&#8593; 88%</span></td>
+        <td><span class="views-count">11.7k</span></td>
+        <td><span class="return-pos">+20.6%</span></td>
+        <td><span class="return-pos">+221.4%</span></td>
+        <td>US$327.3b</td>
+        <td>Semiconductors</td>
+        <td><button class="star-btn">&#9734;</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <div class="page-btn" style="font-size: 11px;">&#9664;</div>
+    <div class="page-btn active">1</div>
+    <div class="page-btn">2</div>
+    <div class="page-btn">3</div>
+    <div class="page-dots">...</div>
+    <div class="page-btn">42</div>
+    <div class="page-btn" style="font-size: 11px;">&#9654;</div>
+  </div>
+
+</div>
+
+</body>
+</html>
